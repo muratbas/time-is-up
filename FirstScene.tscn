@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://dssfpfyswg70j"]
+
+[ext_resource type="Script" uid="uid://bqnjek44m2s0y" path="res://first_scene.gd" id="1_klfix"]
+[ext_resource type="Texture2D" uid="uid://c240i8skmq8gt" path="res://icon.svg" id="1_u55yb"]
+
+[node name="Node2D" type="Node2D" unique_id=1691051821]
+script = ExtResource("1_klfix")
+
+[node name="karakter" type="Sprite2D" parent="." unique_id=559524713]
+modulate = Color(1.6852883, 1.6852883, 1.6852883, 1)
+texture = ExtResource("1_u55yb")
