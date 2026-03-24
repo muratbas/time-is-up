@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://d4a7oy4up4d20" path="res://Assets/Scripts/player.gd" id="1_ibqoo"]
 [ext_resource type="Texture2D" uid="uid://3exc0eip7ggt" path="res://Assets/Sprites/char/karakterspritesheet.png" id="2_ibqoo"]
 [ext_resource type="Texture2D" uid="uid://bw0yvi70670la" path="res://Assets/Sprites/items/tntsprite.png" id="3_71wdy"]
+[ext_resource type="Texture2D" uid="uid://c7cynlxvhktht" path="res://Assets/Sprites/char/time_is_up_player_base (3).png" id="3_uiccu"]
 [ext_resource type="Texture2D" uid="uid://gwis1dakpuql" path="res://Assets/Sprites/char/double_jump_effect.png" id="4_ncuj1"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_71wdy"]
@@ -40,6 +41,22 @@ region = Rect2(32, 64, 32, 32)
 [sub_resource type="AtlasTexture" id="AtlasTexture_aau13"]
 atlas = ExtResource("2_ibqoo")
 region = Rect2(64, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v77ya"]
+atlas = ExtResource("3_uiccu")
+region = Rect2(0, 192, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_47lkq"]
+atlas = ExtResource("3_uiccu")
+region = Rect2(32, 192, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y8flv"]
+atlas = ExtResource("3_uiccu")
+region = Rect2(64, 192, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ilw6o"]
+atlas = ExtResource("3_uiccu")
+region = Rect2(96, 192, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_c8n8k"]
 atlas = ExtResource("2_ibqoo")
@@ -148,6 +165,23 @@ animations = [{
 "loop": true,
 "name": &"jump",
 "speed": 20.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v77ya")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_47lkq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y8flv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ilw6o")
+}],
+"loop": false,
+"name": &"punch",
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -274,14 +308,19 @@ animations = [{
 "speed": 15.0
 }]
 
-[node name="player" type="CharacterBody2D" unique_id=551959532]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uiccu"]
+size = Vector2(13, 29)
+
+[node name="player" type="CharacterBody2D" unique_id=551959532 groups=["players"]]
 script = ExtResource("1_ibqoo")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=865814971]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_mlk2r")
-animation = &"tagidle"
+animation = &"punch"
 autoplay = "idle"
+frame = 2
+frame_progress = 0.8227404
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1423131883]
 position = Vector2(0, 1)
@@ -299,7 +338,7 @@ position = Vector2(2, -21)
 scale = Vector2(0.65625, 0.6875)
 sprite_frames = SubResource("SpriteFrames_wvor5")
 animation = &"TNT"
-frame_progress = 0.9448073
+frame_progress = 0.18985833
 
 [node name="DoubleJumpEffect" type="AnimatedSprite2D" parent="." unique_id=1390648661]
 visible = false
@@ -308,3 +347,13 @@ position = Vector2(1, 8)
 scale = Vector2(0.75, 0.78125)
 sprite_frames = SubResource("SpriteFrames_v77ya")
 animation = &"puff"
+
+[node name="PunchHitbox" type="Area2D" parent="." unique_id=737731233]
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PunchHitbox" unique_id=1594711459]
+position = Vector2(6, 1)
+shape = SubResource("RectangleShape2D_uiccu")
+disabled = true
+
+[connection signal="body_entered" from="PunchHitbox" to="." method="_on_punch_hitbox_body_entered"]
