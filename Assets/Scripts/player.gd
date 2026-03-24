@@ -2,15 +2,22 @@ extends CharacterBody2D
 @onready var animated_sprite_2d = $AnimatedSprite2D
 @onready var coyote_timer = $CoyoteTimer
 
+@export var player_id: int = 1
+
 const SPEED = 280.0
 const JUMP_VELOCITY = -600.0 # h = v²/(2g) → ~72px with gravity 2500
 const JUMP_CUT_MULTIPLIER = 0.35 # Lower = shorter tap jump, higher = closer to full jump
-const MAX_JUMPS = 2
+const MAX_JUMPS = 1
 
 var jumps_remaining = MAX_JUMPS
 
 
 func _physics_process(delta: float) -> void:
+	# Build input action names from player_id (e.g. "p1_left", "p2_jump")
+	var action_left  = "p" + str(player_id) + "_left"
+	var action_right = "p" + str(player_id) + "_right"
+	var action_jump  = "p" + str(player_id) + "_jump"
+
 	# Store floor state BEFORE move_and_slide
 	var was_on_floor = is_on_floor()
 
@@ -37,7 +44,7 @@ func _physics_process(delta: float) -> void:
 		velocity += get_gravity() * delta
 
 	# Handle jump — allow jump on floor, coyote window, or if double jump available
-	if Input.is_action_just_pressed("jump"):
+	if Input.is_action_just_pressed(action_jump):
 		var coyote_available = not coyote_timer.is_stopped()
 
 		if is_on_floor() or coyote_available:
@@ -50,11 +57,11 @@ func _physics_process(delta: float) -> void:
 			jumps_remaining -= 1
 
 	# Cut jump short when button released early (variable height jump)
-	if Input.is_action_just_released("jump") and velocity.y < 0:
+	if Input.is_action_just_released(action_jump) and velocity.y < 0:
 		velocity.y *= JUMP_CUT_MULTIPLIER
 
 	# Get the input direction and handle the movement/deceleration.
-	var direction := Input.get_axis("left", "right")
+	var direction := Input.get_axis(action_left, action_right)
 	if direction:
 		velocity.x = direction * SPEED
 	else:
