@@ -317,10 +317,8 @@ script = ExtResource("1_ibqoo")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=865814971]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_mlk2r")
-animation = &"punch"
+animation = &"tagrun"
 autoplay = "idle"
-frame = 2
-frame_progress = 0.8227404
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1423131883]
 position = Vector2(0, 1)
@@ -334,11 +332,11 @@ one_shot = true
 visible = false
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Marker2D" unique_id=422031226]
-position = Vector2(2, -21)
-scale = Vector2(0.65625, 0.6875)
+position = Vector2(3, -23)
+scale = Vector2(0.828125, 0.8675595)
 sprite_frames = SubResource("SpriteFrames_wvor5")
 animation = &"TNT"
-frame_progress = 0.012036588
+frame_progress = 0.37125695
 
 [node name="DoubleJumpEffect" type="AnimatedSprite2D" parent="." unique_id=1390648661]
 visible = false
