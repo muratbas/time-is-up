@@ -1,6 +1,7 @@
 extends CharacterBody2D
 @onready var animated_sprite_2d = $AnimatedSprite2D
 @onready var coyote_timer = $CoyoteTimer
+@onready var double_jump_effect = $DoubleJumpEffect
 
 @export var player_id: int = 1
 
@@ -12,11 +13,19 @@ const MAX_JUMPS = 1
 var jumps_remaining = MAX_JUMPS
 
 
+func _ready() -> void:
+	double_jump_effect.visible = false
+	double_jump_effect.animation_finished.connect(_on_double_jump_animation_finished)
+
+
+func _on_double_jump_animation_finished() -> void:
+	double_jump_effect.visible = false
+
 func _physics_process(delta: float) -> void:
 	# Build input action names from player_id (e.g. "p1_left", "p2_jump")
-	var action_left  = "p" + str(player_id) + "_left"
+	var action_left = "p" + str(player_id) + "_left"
 	var action_right = "p" + str(player_id) + "_right"
-	var action_jump  = "p" + str(player_id) + "_jump"
+	var action_jump = "p" + str(player_id) + "_jump"
 
 	# Store floor state BEFORE move_and_slide
 	var was_on_floor = is_on_floor()
@@ -55,6 +64,10 @@ func _physics_process(delta: float) -> void:
 			# Double jump (in the air)
 			velocity.y = JUMP_VELOCITY
 			jumps_remaining -= 1
+			# Show the double jump effect at player's position
+			double_jump_effect.global_position = self.global_position
+			double_jump_effect.visible = true
+			double_jump_effect.play("puff")
 
 	# Cut jump short when button released early (variable height jump)
 	if Input.is_action_just_released(action_jump) and velocity.y < 0:

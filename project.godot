@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Time is UP"
-run/main_scene="uid://88ips82anuhv"
+run/main_scene="uid://bb0oljg8x4cnh"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
