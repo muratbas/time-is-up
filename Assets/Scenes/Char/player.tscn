@@ -227,3 +227,7 @@ frame_progress = 0.09818022
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1423131883]
 position = Vector2(0, 1)
 shape = SubResource("CapsuleShape2D_ibqoo")
+
+[node name="CoyoteTimer" type="Timer" parent="." unique_id=521657932]
+wait_time = 0.15
+one_shot = true

@@ -9,5 +9,7 @@ position = Vector2(0, -2)
 [node name="test_arena" parent="." unique_id=1291855602 instance=ExtResource("1_qplxx")]
 
 [node name="player" parent="." unique_id=551959532 instance=ExtResource("1_l26l0")]
-position = Vector2(498.00006, 171)
-scale = Vector2(0.25, 0.25)
+position = Vector2(353, 219)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1795941609]
+position = Vector2(320, 180)
