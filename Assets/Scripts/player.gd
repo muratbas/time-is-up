@@ -4,7 +4,6 @@ extends CharacterBody2D
 @onready var double_jump_effect = $DoubleJumpEffect
 @onready var punch_hitbox = $PunchHitbox
 
-@export var player_id: int = 1
 
 const SPEED = 280.0
 const JUMP_VELOCITY = -600.0 # h = v²/(2g) → ~72px with gravity 2500
@@ -56,11 +55,10 @@ func receive_knockback(force: Vector2) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	# Build input action names from player_id (e.g. "p1_left", "p2_jump")
-	var action_left = "p" + str(player_id) + "_left"
-	var action_right = "p" + str(player_id) + "_right"
-	var action_jump = "p" + str(player_id) + "_jump"
-	var action_punch = "p" + str(player_id) + "_punch"
+	var action_left = "Left"
+	var action_right = "Right"
+	var action_jump = "Jump"
+	var action_punch = "Punch"
 
 	# Store floor state BEFORE move_and_slide
 	var was_on_floor = is_on_floor()

@@ -338,7 +338,7 @@ position = Vector2(2, -21)
 scale = Vector2(0.65625, 0.6875)
 sprite_frames = SubResource("SpriteFrames_wvor5")
 animation = &"TNT"
-frame_progress = 0.18985833
+frame_progress = 0.012036588
 
 [node name="DoubleJumpEffect" type="AnimatedSprite2D" parent="." unique_id=1390648661]
 visible = false
