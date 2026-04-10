@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="TaskListData" format=3 uid="uid://cxicl3mfa6f7x"]
+
+[ext_resource type="Script" uid="uid://cxqej13alpt16" path="res://addons/to-do-list/data/task_data.gd" id="1_2iswm"]
+
+[resource]
+script = ExtResource("1_2iswm")
+tasks = [Dictionary[String, Variant]({
+"completed": false,
+"name": "hitboxlar bozuk"
+}), Dictionary[String, Variant]({
+"completed": false,
+"name": "karakterler iç içe geçebilmeli"
+})]

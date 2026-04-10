@@ -9,10 +9,14 @@ position = Vector2(0, -2)
 
 [node name="test_arena" parent="." unique_id=1291855602 instance=ExtResource("1_qplxx")]
 
-[node name="Node2D" type="Node2D" parent="." unique_id=1163680110]
+[node name="Oyuncular" type="Node2D" parent="." unique_id=1163680110]
 
-[node name="player" parent="Node2D" unique_id=551959532 instance=ExtResource("1_l26l0")]
-position = Vector2(353, 219)
+[node name="player" parent="Oyuncular" unique_id=551959532 instance=ExtResource("1_l26l0")]
+position = Vector2(320, 25)
+
+[node name="player2" parent="Oyuncular" unique_id=1412726568 instance=ExtResource("1_l26l0")]
+modulate = Color(1, 0.36078432, 0.36078432, 1)
+position = Vector2(210, 207)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1795941609]
 position = Vector2(320, 180)

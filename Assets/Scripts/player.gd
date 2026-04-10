@@ -37,6 +37,8 @@ func _ready() -> void:
 
 	double_jump_effect.animation_finished.connect(_on_double_jump_animation_finished)
 	animated_sprite.animation_finished.connect(_on_player_animation_finished)
+	# Editor bağlantısına güvenmek yerine kod ile bağlanır; kopuk sinyal riskini ortadan kaldırır
+	punch_hitbox.body_entered.connect(_on_punch_hitbox_body_entered)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -173,15 +175,15 @@ func _update_sprite_direction() -> void:
 
 func perform_punch() -> void:
 	is_punching = true
-	animated_sprite.play("punch")
+	# Ebe olduğunda görsel olarak farklı bir yumruk animasyonu oynatılır
+	animated_sprite.play("tagpunch" if is_tag else "punch")
 	punch_hitbox.monitoring = true
 
 	# Hitbox, oyuncunun baktığı yönle hizalanır
 	punch_hitbox.scale.x = -1.0 if animated_sprite.flip_h else 1.0
+	# Anlık overlap kontrolü kaldırıldı: monitoring yeni açıldığında Godot aynı
+	# frame'de çakışma hesaplamaz, bu yüzden body_entered sinyaline güvenilir
 
-	# Anlık çakışma durumunda beklemeden knockback uygulansın
-	for body: Node2D in punch_hitbox.get_overlapping_bodies():
-		_apply_knockback_to(body)
 
 
 func _apply_knockback_to(body: Node2D) -> void:
@@ -225,7 +227,8 @@ func _on_double_jump_animation_finished() -> void:
 func _on_player_animation_finished() -> void:
 	# Yumruk animasyonu bittiğinde hitbox'ı hemen kapatmak gerekir; aksi hâlde
 	# bir frame gecikmeli kapanma çakışma hatalarına yol açabilir
-	if animated_sprite.animation == "punch":
+	var current: String = animated_sprite.animation
+	if current == "punch" or current == "tagpunch":
 		is_punching = false
 		punch_hitbox.monitoring = false
 
