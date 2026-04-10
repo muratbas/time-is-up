@@ -15,6 +15,10 @@ run/main_scene="uid://bb0oljg8x4cnh"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+GameStateEvents="*uid://m6itdbeyjddt"
+
 [debug]
 
 settings/stdout/print_fps=true
@@ -26,6 +30,10 @@ window/size/viewport_height=360
 window/size/window_width_override=1920
 window/size/window_height_override=1080
 window/stretch/mode="canvas_items"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/bluebrains_character_controller/plugin.cfg", "res://addons/brennys-game-manager/plugin.cfg", "res://addons/to-do-list/plugin.cfg")
 
 [input]
 

@@ -378,11 +378,11 @@ sources/4 = SubResource("TileSetAtlasSource_p1o3w")
 [node name="test_arena" type="Node2D" unique_id=1291855602]
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1138910358]
+visible = false
 position = Vector2(321, 179)
 texture = ExtResource("1_p1o3w")
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1931775743]
-visible = false
 texture_filter = 1
 offset_left = 1.0
 offset_right = 641.0
