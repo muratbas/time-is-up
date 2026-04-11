@@ -15,6 +15,14 @@ const JUMP_CUT_MULTIPLIER: float = 0.35 # Düşük = kısa dokunuş, yüksek = t
 const MAX_JUMPS: int = 1
 const PUNCH_FORCE: float = 800.0
 const PUNCH_VERTICAL: float = -200.0
+# Her oyuncuya farklı renk atanır; sıralı peer ID'ye göre seçilir
+const PLAYER_COLORS: Array[Color] = [
+	Color(1.0, 1.0, 1.0),   # Beyaz  (server)
+	Color(1.0, 0.4, 0.4),   # Kırmızı
+	Color(0.4, 0.7, 1.0),   # Mavi
+	Color(0.4, 1.0, 0.5),   # Yeşil
+	Color(1.0, 0.85, 0.3),  # Sarı
+]
 
 # ── Sinyaller ────────────────────────────────────────────────────────────────
 ## Ebelik başka oyuncuya geçtiğinde üst sistemi bilgilendirmek için
@@ -41,6 +49,7 @@ func _ready() -> void:
 	punch_hitbox.body_entered.connect(_on_punch_hitbox_body_entered)
 
 	_set_spawn_position()
+	_set_player_color()
 
 
 func _set_spawn_position() -> void:
@@ -52,13 +61,26 @@ func _set_spawn_position() -> void:
 	if points.is_empty():
 		return
 
-	# Tüm peer ID'leri sırala; server (1) her zaman en küçük ID olduğundan hep index 0'dadır
-	var all_ids: Array = Array(multiplayer.get_peers()) + [1]
+	# get_peers() yerel peer'ı içermez; kendi ID'mizi ayrıca ekliyoruz
+	var all_ids: Array = Array(multiplayer.get_peers()) + [multiplayer.get_unique_id()]
 	all_ids.sort()
 
 	var my_index: int = all_ids.find(multiplayer.get_unique_id())
 	if my_index >= 0:
 		global_position = (points[my_index % points.size()] as Marker2D).global_position
+
+
+func _set_player_color() -> void:
+	# Node'un adı spawner tarafından peer ID olarak atandı; rengi buna göre belirle
+	var player_id: int = name.to_int()
+
+	# get_peers() yerel peer'ı içermez; kendi ID'mizi ayrıca ekliyoruz
+	var all_ids: Array = Array(multiplayer.get_peers()) + [multiplayer.get_unique_id()]
+	all_ids.sort()
+
+	var player_index: int = all_ids.find(player_id)
+	if player_index >= 0:
+		animated_sprite.modulate = PLAYER_COLORS[player_index % PLAYER_COLORS.size()]
 
 
 # ══════════════════════════════════════════════════════════════════════════════
