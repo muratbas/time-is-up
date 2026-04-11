@@ -26,10 +26,10 @@ texture = ExtResource("1_dy04a")
 
 [node name="Title" type="Label" parent="." unique_id=1961790100]
 layout_mode = 0
-offset_left = 278.0
-offset_top = 97.0
-offset_right = 364.0
-offset_bottom = 120.0
+offset_left = 277.0
+offset_top = 77.0
+offset_right = 363.0
+offset_bottom = 100.0
 text = "TIME IS UP!"
 label_settings = SubResource("LabelSettings_cuhuu")
 
@@ -47,18 +47,23 @@ offset_bottom = 50.5
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="Client" type="Button" parent="menubuttons" unique_id=1662958799]
+layout_mode = 2
+text = "Client"
+
 [node name="Play" type="Button" parent="menubuttons" unique_id=1810674089]
 layout_mode = 2
 text = "Yeni Oyun"
 
-[node name="Options" type="Button" parent="menubuttons" unique_id=627719126]
+[node name="Server" type="Button" parent="menubuttons" unique_id=1370565380]
 layout_mode = 2
-text = "Ayarlar"
+text = "Sunucu"
 
 [node name="Quit" type="Button" parent="menubuttons" unique_id=848115044]
 layout_mode = 2
 text = "Çıkış"
 
+[connection signal="pressed" from="menubuttons/Client" to="." method="_on_client_pressed"]
 [connection signal="pressed" from="menubuttons/Play" to="." method="_on_play_pressed"]
-[connection signal="pressed" from="menubuttons/Options" to="." method="_on_options_pressed"]
+[connection signal="pressed" from="menubuttons/Server" to="." method="_on_server_pressed"]
 [connection signal="pressed" from="menubuttons/Quit" to="." method="_on_quit_pressed"]

@@ -1,22 +1,11 @@
 [gd_scene format=3 uid="uid://88ips82anuhv"]
 
-[ext_resource type="PackedScene" uid="uid://8s325ht8ke3a" path="res://Assets/Scenes/Char/player.tscn" id="1_l26l0"]
 [ext_resource type="PackedScene" uid="uid://bgjfhx0a7tgdd" path="res://Assets/Scenes/Levels/test_arena.tscn" id="1_qplxx"]
 [ext_resource type="Script" uid="uid://bxcd1pdpi7v7y" path="res://Assets/Scripts/game_handler.gd" id="3_elf4b"]
 
 [node name="Main" type="Node2D" unique_id=847079045]
-position = Vector2(0, -2)
 
 [node name="test_arena" parent="." unique_id=1291855602 instance=ExtResource("1_qplxx")]
-
-[node name="Oyuncular" type="Node2D" parent="." unique_id=1163680110]
-
-[node name="player" parent="Oyuncular" unique_id=551959532 instance=ExtResource("1_l26l0")]
-position = Vector2(320, 25)
-
-[node name="player2" parent="Oyuncular" unique_id=1412726568 instance=ExtResource("1_l26l0")]
-modulate = Color(1, 0.36078432, 0.36078432, 1)
-position = Vector2(210, 207)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1795941609]
 position = Vector2(320, 180)

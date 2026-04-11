@@ -40,31 +40,49 @@ func _ready() -> void:
 	# Editor bağlantısına güvenmek yerine kod ile bağlanır; kopuk sinyal riskini ortadan kaldırır
 	punch_hitbox.body_entered.connect(_on_punch_hitbox_body_entered)
 
+	_set_spawn_position()
+
+
+func _set_spawn_position() -> void:
+	# Sadece kendi oyuncumuzun spawn noktasını biz belirleriz
+	if not is_multiplayer_authority():
+		return
+
+	var points: Array[Node] = get_tree().get_nodes_in_group("spawn_points")
+	if points.is_empty():
+		return
+
+	# Tüm peer ID'leri sırala; server (1) her zaman en küçük ID olduğundan hep index 0'dadır
+	var all_ids: Array = Array(multiplayer.get_peers()) + [1]
+	all_ids.sort()
+
+	var my_index: int = all_ids.find(multiplayer.get_unique_id())
+	if my_index >= 0:
+		global_position = (points[my_index % points.size()] as Marker2D).global_position
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Ana Döngü
 # ══════════════════════════════════════════════════════════════════════════════
 
 func _physics_process(delta: float) -> void:
-	# Sadece bu peer'ın sahibi olan oyuncu girdi işlemeli
-	if not is_multiplayer_authority():
-		return
+	if is_multiplayer_authority():
+		# Sadece bu peer'ın sahibi olan oyuncu girdi işlemeli
+		var was_on_floor: bool = is_on_floor()
 
-	# move_and_slide öncesi zemin durumu saklanır, coyote tespiti için
-	var was_on_floor: bool = is_on_floor()
+		_reset_jumps_if_grounded()
+		_apply_gravity(delta)
+		_handle_punch_input()
+		_handle_jump_input()
+		_handle_jump_cut()
+		_handle_movement()
+		move_and_slide()
 
-	_reset_jumps_if_grounded()
-	_apply_gravity(delta)
-	_handle_punch_input()
-	_handle_jump_input()
-	_handle_jump_cut()
-	_handle_movement()
+		_start_coyote_if_walked_off(was_on_floor)
+
+	# Animasyonlar tüm peerlarda çalışır; velocity senkronize olduğundan geçerlidir
 	_update_animation()
 	_update_sprite_direction()
-
-	move_and_slide()
-
-	_start_coyote_if_walked_off(was_on_floor)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -150,7 +168,15 @@ func _update_animation() -> void:
 	if is_punching:
 		return
 
-	if not is_on_floor() and coyote_timer.is_stopped():
+	# Otorite peer'da is_on_floor() doğru çalışır; diğer peerlarda
+	# move_and_slide() olmadığından velocity.y ile havada olup olmadığı tahmin edilir
+	var in_air: bool
+	if is_multiplayer_authority():
+		in_air = not is_on_floor() and coyote_timer.is_stopped()
+	else:
+		in_air = absf(velocity.y) > 50.0
+
+	if in_air:
 		animated_sprite.play("jump")
 	elif absf(velocity.x) > 1.0:
 		animated_sprite.play("tagrun" if is_tag else "run")
@@ -183,7 +209,6 @@ func perform_punch() -> void:
 	punch_hitbox.scale.x = -1.0 if animated_sprite.flip_h else 1.0
 	# Anlık overlap kontrolü kaldırıldı: monitoring yeni açıldığında Godot aynı
 	# frame'de çakışma hesaplamaz, bu yüzden body_entered sinyaline güvenilir
-
 
 
 func _apply_knockback_to(body: Node2D) -> void:
@@ -244,3 +269,7 @@ func _on_punch_hitbox_body_entered(body: Node2D) -> void:
 		body.become_tag()
 		emit_signal("tag_transferred", self , body)
 		_lose_tag()
+
+
+func _enter_tree() -> void:
+	set_multiplayer_authority(name.to_int())
