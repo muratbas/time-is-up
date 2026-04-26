@@ -6,13 +6,10 @@
 
 [node name="Main" type="Node2D" unique_id=847079045]
 
-[node name="Camera2D" type="Camera2D" parent="." unique_id=1795941609]
-position = Vector2(320, 180)
-
 [node name="GameHandler" type="Node" parent="." unique_id=1283817065]
 script = ExtResource("3_elf4b")
 
 [node name="Map" parent="." unique_id=1530014150 instance=ExtResource("2_elf4b")]
 
 [node name="player" parent="." unique_id=551959532 instance=ExtResource("3_guoxd")]
-position = Vector2(211, 222)
+position = Vector2(111, 243)

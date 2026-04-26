@@ -11,26 +11,28 @@ extends CharacterBody2D
 # ── Sabitler ─────────────────────────────────────────────────────────────────
 const SPEED: float = 280.0
 const JUMP_VELOCITY: float = -600.0 # h = v²/(2g) → ~72px, yerçekimi 2500 ile
-const JUMP_CUT_MULTIPLIER: float = 0.35 # Düşük = kısa dokunuş, yüksek = tam zıplama
+const JUMP_CUT_MULTIPLIER: float = 0.35
 const MAX_JUMPS: int = 1
 const PUNCH_FORCE: float = 800.0
 const PUNCH_VERTICAL: float = -200.0
-# Her oyuncuya farklı renk atanır; sıralı peer ID'ye göre seçilir
-const PLAYER_COLORS: Array[Color] = [
-	Color(1.0, 1.0, 1.0),   # Beyaz  (server)
-	Color(1.0, 0.4, 0.4),   # Kırmızı
-	Color(0.4, 0.7, 1.0),   # Mavi
-	Color(0.4, 1.0, 0.5),   # Yeşil
-	Color(1.0, 0.85, 0.3),  # Sarı
-]
 
-# ── Sinyaller ────────────────────────────────────────────────────────────────
+# ── Sinyal ───────────────────────────────────────────────────────────────────
 ## Ebelik başka oyuncuya geçtiğinde üst sistemi bilgilendirmek için
 signal tag_transferred(from_player: Node, to_player: Node)
 
-# ── Durum Değişkenleri ───────────────────────────────────────────────────────
+# ── State Machine ─────────────────────────────────────────────────────────────
+enum State {
+	IDLE,
+	RUNNING,
+	JUMPING,
+	FALLING,
+	PUNCHING,
+}
+
+var state: State = State.IDLE
+
+# ── Durum Değişkenleri ────────────────────────────────────────────────────────
 var jumps_remaining: int = MAX_JUMPS
-var is_punching: bool = false
 var is_tag: bool = false
 
 
@@ -41,46 +43,12 @@ var is_tag: bool = false
 func _ready() -> void:
 	double_jump_effect.visible = false
 	tnt_marker.visible = false
-	punch_hitbox.monitoring = false # Performans için varsayılan olarak kapalı
+	punch_hitbox.monitoring = false
 
 	double_jump_effect.animation_finished.connect(_on_double_jump_animation_finished)
 	animated_sprite.animation_finished.connect(_on_player_animation_finished)
-	# Editor bağlantısına güvenmek yerine kod ile bağlanır; kopuk sinyal riskini ortadan kaldırır
+	# Kod ile bağlanarak kopuk sinyal riskini ortadan kaldırır
 	punch_hitbox.body_entered.connect(_on_punch_hitbox_body_entered)
-
-	_set_spawn_position()
-	_set_player_color()
-
-
-func _set_spawn_position() -> void:
-	# Sadece kendi oyuncumuzun spawn noktasını biz belirleriz
-	if not is_multiplayer_authority():
-		return
-
-	var points: Array[Node] = get_tree().get_nodes_in_group("spawn_points")
-	if points.is_empty():
-		return
-
-	# get_peers() yerel peer'ı içermez; kendi ID'mizi ayrıca ekliyoruz
-	var all_ids: Array = Array(multiplayer.get_peers()) + [multiplayer.get_unique_id()]
-	all_ids.sort()
-
-	var my_index: int = all_ids.find(multiplayer.get_unique_id())
-	if my_index >= 0:
-		global_position = (points[my_index % points.size()] as Marker2D).global_position
-
-
-func _set_player_color() -> void:
-	# Node'un adı spawner tarafından peer ID olarak atandı; rengi buna göre belirle
-	var player_id: int = name.to_int()
-
-	# get_peers() yerel peer'ı içermez; kendi ID'mizi ayrıca ekliyoruz
-	var all_ids: Array = Array(multiplayer.get_peers()) + [multiplayer.get_unique_id()]
-	all_ids.sort()
-
-	var player_index: int = all_ids.find(player_id)
-	if player_index >= 0:
-		animated_sprite.modulate = PLAYER_COLORS[player_index % PLAYER_COLORS.size()]
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -88,65 +56,132 @@ func _set_player_color() -> void:
 # ══════════════════════════════════════════════════════════════════════════════
 
 func _physics_process(delta: float) -> void:
-	if is_multiplayer_authority():
-		# Sadece bu peer'ın sahibi olan oyuncu girdi işlemeli
-		var was_on_floor: bool = is_on_floor()
+	var was_on_floor: bool = is_on_floor()
 
-		_reset_jumps_if_grounded()
-		_apply_gravity(delta)
-		_handle_punch_input()
-		_handle_jump_input()
-		_handle_jump_cut()
-		_handle_movement()
-		move_and_slide()
-
-		_start_coyote_if_walked_off(was_on_floor)
-
-	# Animasyonlar tüm peerlarda çalışır; velocity senkronize olduğundan geçerlidir
+	_apply_gravity(delta)
+	_process_state(delta)
+	move_and_slide()
+	_post_move(was_on_floor)
 	_update_animation()
 	_update_sprite_direction()
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Fizik Alt Fonksiyonları
+# State Machine — Dispatch
 # ══════════════════════════════════════════════════════════════════════════════
 
-func _reset_jumps_if_grounded() -> void:
+func _process_state(_delta: float) -> void:
+	match state:
+		State.IDLE:
+			_state_idle()
+		State.RUNNING:
+			_state_running()
+		State.JUMPING:
+			_state_jumping()
+		State.FALLING:
+			_state_falling()
+		State.PUNCHING:
+			_state_punching()
+
+
+func _transition(new_state: State) -> void:
+	state = new_state
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# State Machine — State'ler
+# ══════════════════════════════════════════════════════════════════════════════
+
+func _state_idle() -> void:
+	velocity.x = move_toward(velocity.x, 0.0, SPEED)
+
+	_check_punch()
+	_check_jump()
+
+	var direction: float = Input.get_axis("Left", "Right")
+	if direction != 0.0:
+		_transition(State.RUNNING)
+	elif not is_on_floor():
+		_transition(State.FALLING)
+
+
+func _state_running() -> void:
+	var direction: float = Input.get_axis("Left", "Right")
+	velocity.x = direction * SPEED
+
+	_check_punch()
+	_check_jump()
+
+	if direction == 0.0:
+		_transition(State.IDLE)
+	elif not is_on_floor():
+		_transition(State.FALLING)
+
+
+func _state_jumping() -> void:
+	var direction: float = Input.get_axis("Left", "Right")
+	velocity.x = direction * SPEED if direction != 0.0 else move_toward(velocity.x, 0.0, SPEED)
+
+	_check_punch()
+	_check_jump()
+	_check_jump_cut()
+
+	# Zıplama doruk noktasını geçince düşme state'ine geç
+	if velocity.y >= 0.0:
+		_transition(State.FALLING)
+
+
+func _state_falling() -> void:
+	var direction: float = Input.get_axis("Left", "Right")
+	velocity.x = direction * SPEED if direction != 0.0 else move_toward(velocity.x, 0.0, SPEED)
+
+	_check_punch()
+	_check_jump()
+
 	if is_on_floor():
 		jumps_remaining = MAX_JUMPS
+		var move_dir: float = Input.get_axis("Left", "Right")
+		_transition(State.RUNNING if move_dir != 0.0 else State.IDLE)
 
 
-func _apply_gravity(delta: float) -> void:
-	# Coyote penceresi aktifken yerçekimi uygulanmaz; aksi hâlde oyuncu anında düşer
-	if not is_on_floor() and coyote_timer.is_stopped():
-		velocity += get_gravity() * delta
+func _state_punching() -> void:
+	# Yumruk süresince yatay hareketi durdur; state _on_player_animation_finished'da biter
+	velocity.x = move_toward(velocity.x, 0.0, SPEED)
 
 
-func _handle_punch_input() -> void:
-	if Input.is_action_just_pressed("Punch") and not is_punching:
-		perform_punch()
+# ══════════════════════════════════════════════════════════════════════════════
+# Ortak Eylemler (Birden fazla state'te kullanılır)
+# ══════════════════════════════════════════════════════════════════════════════
+
+func _check_punch() -> void:
+	if Input.is_action_just_pressed("Punch"):
+		_perform_punch()
 
 
-func _handle_jump_input() -> void:
+func _check_jump() -> void:
 	if not Input.is_action_just_pressed("Jump"):
 		return
 
 	var coyote_available: bool = not coyote_timer.is_stopped()
 
 	if is_on_floor() or coyote_available:
-		_execute_jump()
+		velocity.y = JUMP_VELOCITY
 		coyote_timer.stop()
+		_transition(State.JUMPING)
 	elif jumps_remaining > 0:
 		_execute_double_jump()
 
 
-func _execute_jump() -> void:
-	velocity.y = JUMP_VELOCITY
+func _check_jump_cut() -> void:
+	# Düğme erken bırakılırsa zıplama kesilerek değişken yükseklik sağlanır
+	if Input.is_action_just_released("Jump") and velocity.y < 0.0:
+		velocity.y *= JUMP_CUT_MULTIPLIER
 
 
 func _execute_double_jump() -> void:
 	velocity.y = JUMP_VELOCITY
 	jumps_remaining -= 1
+	_transition(State.JUMPING)
 
 	# Çift zıplama efekti oyuncunun mevcut konumuna taşınır
 	double_jump_effect.global_position = global_position
@@ -154,31 +189,20 @@ func _execute_double_jump() -> void:
 	double_jump_effect.play("puff")
 
 
-func _handle_jump_cut() -> void:
-	# Düğme erken bırakılırsa zıplama kesilerek değişken yükseklik sağlanır
-	if Input.is_action_just_released("Jump") and velocity.y < 0:
-		velocity.y *= JUMP_CUT_MULTIPLIER
+# ══════════════════════════════════════════════════════════════════════════════
+# Fizik Yardımcıları
+# ══════════════════════════════════════════════════════════════════════════════
+
+func _apply_gravity(delta: float) -> void:
+	# Coyote penceresi aktifken yerçekimi uygulanmaz; aksi hâlde oyuncu anında düşer
+	if not is_on_floor() and coyote_timer.is_stopped():
+		velocity += get_gravity() * delta
 
 
-func _handle_movement() -> void:
-	if is_punching:
-		# Yumruk animasyonu sırasında kayma hissi vermemek için hız sıfırlanır
-		velocity.x = move_toward(velocity.x, 0.0, SPEED)
-		return
-
-	var direction: float = Input.get_axis("Left", "Right")
-	if direction != 0.0:
-		velocity.x = direction * SPEED
-	else:
-		velocity.x = move_toward(velocity.x, 0.0, SPEED)
-
-
-func _start_coyote_if_walked_off(was_on_floor: bool) -> void:
-	# Oyuncu zıplamadan kenara yürüdüğünde coyote süresi başlatılır
+func _post_move(was_on_floor: bool) -> void:
+	# move_and_slide() sonrası, oyuncu kenara yürüyerek düştüyse coyote timer başlar
 	if was_on_floor and not is_on_floor() and velocity.y >= 0.0:
 		coyote_timer.start()
-		# jumps_remaining düşürülmez; coyote zıplaması zemin zıplaması sayılır,
-		# bu sayede coyote sonrası double jump hakkı kaybolmaz
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -186,29 +210,22 @@ func _start_coyote_if_walked_off(was_on_floor: bool) -> void:
 # ══════════════════════════════════════════════════════════════════════════════
 
 func _update_animation() -> void:
-	# Yumruk animasyonu bitmeden diğer animasyonların üzerine yazılmasını engeller
-	if is_punching:
-		return
-
-	# Otorite peer'da is_on_floor() doğru çalışır; diğer peerlarda
-	# move_and_slide() olmadığından velocity.y ile havada olup olmadığı tahmin edilir
-	var in_air: bool
-	if is_multiplayer_authority():
-		in_air = not is_on_floor() and coyote_timer.is_stopped()
-	else:
-		in_air = absf(velocity.y) > 50.0
-
-	if in_air:
-		animated_sprite.play("jump")
-	elif absf(velocity.x) > 1.0:
-		animated_sprite.play("tagrun" if is_tag else "run")
-	else:
-		animated_sprite.play("tagidle" if is_tag else "idle")
+	match state:
+		State.IDLE:
+			animated_sprite.play("tagidle" if is_tag else "idle")
+		State.RUNNING:
+			animated_sprite.play("tagrun" if is_tag else "run")
+		State.JUMPING:
+			animated_sprite.play("jump")
+		State.FALLING:
+			animated_sprite.play("fall")
+		State.PUNCHING:
+			pass # Animasyon _perform_punch() içinde başlatılır, bitmesini bekle
 
 
 func _update_sprite_direction() -> void:
 	# Yumruk animasyonu ortasında sprite'ın dönmesi görsel bozulma yaratır
-	if is_punching:
+	if state == State.PUNCHING:
 		return
 
 	if velocity.x > 0.0:
@@ -221,16 +238,17 @@ func _update_sprite_direction() -> void:
 # Yumruk Sistemi
 # ══════════════════════════════════════════════════════════════════════════════
 
-func perform_punch() -> void:
-	is_punching = true
+func _perform_punch() -> void:
+	_transition(State.PUNCHING)
 	# Ebe olduğunda görsel olarak farklı bir yumruk animasyonu oynatılır
 	animated_sprite.play("tagpunch" if is_tag else "punch")
 	punch_hitbox.monitoring = true
-
 	# Hitbox, oyuncunun baktığı yönle hizalanır
 	punch_hitbox.scale.x = -1.0 if animated_sprite.flip_h else 1.0
-	# Anlık overlap kontrolü kaldırıldı: monitoring yeni açıldığında Godot aynı
-	# frame'de çakışma hesaplamaz, bu yüzden body_entered sinyaline güvenilir
+
+
+func receive_knockback(force: Vector2) -> void:
+	velocity = force
 
 
 func _apply_knockback_to(body: Node2D) -> void:
@@ -238,13 +256,8 @@ func _apply_knockback_to(body: Node2D) -> void:
 		return
 	if not body.has_method("receive_knockback"):
 		return
-
 	var direction: float = sign(body.global_position.x - global_position.x)
 	body.receive_knockback(Vector2(direction * PUNCH_FORCE, PUNCH_VERTICAL))
-
-
-func receive_knockback(force: Vector2) -> void:
-	velocity = force
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -272,12 +285,16 @@ func _on_double_jump_animation_finished() -> void:
 
 
 func _on_player_animation_finished() -> void:
-	# Yumruk animasyonu bittiğinde hitbox'ı hemen kapatmak gerekir; aksi hâlde
-	# bir frame gecikmeli kapanma çakışma hatalarına yol açabilir
+	# Yumruk animasyonu bittiğinde hitbox kapatılır ve uygun harekete dönülür
 	var current: String = animated_sprite.animation
 	if current == "punch" or current == "tagpunch":
-		is_punching = false
 		punch_hitbox.monitoring = false
+		# Yere basıyorsa IDLE/RUNNING'e, havadaysa FALLING'e geç
+		if is_on_floor():
+			var dir: float = Input.get_axis("Left", "Right")
+			_transition(State.RUNNING if dir != 0.0 else State.IDLE)
+		else:
+			_transition(State.FALLING)
 
 
 func _on_punch_hitbox_body_entered(body: Node2D) -> void:
@@ -291,7 +308,3 @@ func _on_punch_hitbox_body_entered(body: Node2D) -> void:
 		body.become_tag()
 		emit_signal("tag_transferred", self , body)
 		_lose_tag()
-
-
-func _enter_tree() -> void:
-	set_multiplayer_authority(name.to_int())

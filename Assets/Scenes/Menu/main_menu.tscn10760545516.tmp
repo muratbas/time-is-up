@@ -1,0 +1,59 @@
+[gd_scene format=3 uid="uid://bb0oljg8x4cnh"]
+
+[ext_resource type="Script" uid="uid://cc0oemfpmb0lk" path="res://Assets/Scripts/main_menu.gd" id="1_cuhuu"]
+[ext_resource type="Texture2D" uid="uid://bucus8ssfwgsg" path="res://Assets/Sprites/maps/testarena.png" id="1_dy04a"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_cuhuu"]
+outline_size = 2
+outline_color = Color(0.8869256, 0.6134455, 0.79449666, 1)
+shadow_size = 19
+shadow_color = Color(0.52, 0.52, 0.52, 1)
+
+[node name="MainMenu" type="Control" unique_id=377273684]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_cuhuu")
+
+[node name="Background" type="TextureRect" parent="." unique_id=210163506]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_dy04a")
+
+[node name="Title" type="Label" parent="." unique_id=1961790100]
+layout_mode = 0
+offset_left = 277.0
+offset_top = 77.0
+offset_right = 363.0
+offset_bottom = 100.0
+text = "TIME IS UP!"
+label_settings = SubResource("LabelSettings_cuhuu")
+
+[node name="menubuttons" type="VBoxContainer" parent="." unique_id=1510427431]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -43.5
+offset_top = -50.5
+offset_right = 43.5
+offset_bottom = 50.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Play" type="Button" parent="menubuttons" unique_id=1810674089]
+layout_mode = 2
+text = "Yeni Oyun"
+
+[node name="Quit" type="Button" parent="menubuttons" unique_id=848115044]
+layout_mode = 2
+text = "Çıkış"
+
+[connection signal="pressed" from="menubuttons/Play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="menubuttons/Quit" to="." method="_on_quit_pressed"]

@@ -7,6 +7,14 @@
 [ext_resource type="Texture2D" uid="uid://dbeoqcw8hv2be" path="res://Assets/Sprites/char/carrypunch_carrywall.png" id="4_cjiiu"]
 [ext_resource type="Texture2D" uid="uid://gwis1dakpuql" path="res://Assets/Sprites/char/double_jump_effect.png" id="4_ncuj1"]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_y88jl"]
+atlas = ExtResource("3_uiccu")
+region = Rect2(64, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u0pjy"]
+atlas = ExtResource("3_uiccu")
+region = Rect2(32, 64, 32, 32)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_71wdy"]
 atlas = ExtResource("2_ibqoo")
 region = Rect2(0, 0, 32, 32)
@@ -143,6 +151,17 @@ region = Rect2(160, 160, 32, 32)
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_y88jl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u0pjy")
+}],
+"loop": true,
+"name": &"fall",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_71wdy")
 }, {
 "duration": 1.0,
@@ -181,7 +200,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"jump",
-"speed": 20.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -354,13 +373,13 @@ size = Vector2(9.5, 29)
 collision_layer = 2
 script = ExtResource("1_ibqoo")
 
+[node name="Camera2D" type="Camera2D" parent="." unique_id=2094936081]
+
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=865814971]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_mlk2r")
-animation = &"punch"
+animation = &"fall"
 autoplay = "idle"
-frame = 3
-frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1423131883]
 position = Vector2(0, 1)
