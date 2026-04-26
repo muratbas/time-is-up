@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bucus8ssfwgsg" path="res://Assets/Sprites/maps/testarena.png" id="1_dy04a"]
 [ext_resource type="Texture2D" uid="uid://cmcomj7jj8m1v" path="res://Assets/Sprites/images/Tilemap/old_growth_tileset-export.png" id="2_7tyjs"]
 [ext_resource type="FontFile" uid="uid://gogqic76ay" path="res://Assets/Fonts/KiwiSoda.ttf" id="4_nq0pn"]
+[ext_resource type="AudioStream" uid="uid://b7lnv2ooti6nr" path="res://Assets/SFX/mainmenu.mp3" id="5_nq0pn"]
 
 [sub_resource type="TileMapPattern" id="TileMapPattern_q6ufi"]
 tile_data = PackedInt32Array(0, 327680, 13, 1, 393216, 13, 2, 458752, 13)
@@ -841,6 +842,11 @@ theme_override_fonts/font = ExtResource("4_nq0pn")
 theme_override_styles/normal = SubResource("StyleBoxFlat_fxcrr")
 text = "Çıkış"
 flat = true
+
+[node name="menuMusic" type="AudioStreamPlayer" parent="." unique_id=836007143]
+stream = ExtResource("5_nq0pn")
+autoplay = true
+parameters/looping = false
 
 [connection signal="pressed" from="menubuttons/Play" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="menubuttons/Quit" to="." method="_on_quit_pressed"]
