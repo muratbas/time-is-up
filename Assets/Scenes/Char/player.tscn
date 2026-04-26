@@ -350,20 +350,6 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_uiccu"]
 size = Vector2(9.5, 29)
 
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_cjiiu"]
-properties/0/path = NodePath(".:position")
-properties/0/spawn = true
-properties/0/replication_mode = 1
-properties/1/path = NodePath(".:velocity")
-properties/1/spawn = false
-properties/1/replication_mode = 1
-properties/2/path = NodePath(".:is_punching")
-properties/2/spawn = false
-properties/2/replication_mode = 1
-properties/3/path = NodePath(".:is_tag")
-properties/3/spawn = true
-properties/3/replication_mode = 1
-
 [node name="player" type="CharacterBody2D" unique_id=551959532 groups=["players"]]
 collision_layer = 2
 script = ExtResource("1_ibqoo")
@@ -409,6 +395,3 @@ monitoring = false
 position = Vector2(10, 1)
 shape = SubResource("RectangleShape2D_uiccu")
 disabled = true
-
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=696540512 groups=["players"]]
-replication_config = SubResource("SceneReplicationConfig_cjiiu")
