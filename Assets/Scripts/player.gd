@@ -13,8 +13,9 @@ const SPEED: float = 280.0
 const JUMP_VELOCITY: float = -600.0 # h = v²/(2g) → ~72px, yerçekimi 2500 ile
 const JUMP_CUT_MULTIPLIER: float = 0.35
 const MAX_JUMPS: int = 1
-const PUNCH_FORCE: float = 800.0
-const PUNCH_VERTICAL: float = -200.0
+const PUNCH_FORCE: float = 380.0
+const PUNCH_VERTICAL: float = -120.0
+const STUN_DURATION: float = 0.3
 
 # ── Sinyal ───────────────────────────────────────────────────────────────────
 ## Ebelik başka oyuncuya geçtiğinde üst sistemi bilgilendirmek için
@@ -27,6 +28,7 @@ enum State {
 	JUMPING,
 	FALLING,
 	PUNCHING,
+	STUNNED,
 }
 
 var state: State = State.IDLE
@@ -34,6 +36,10 @@ var state: State = State.IDLE
 # ── Durum Değişkenleri ────────────────────────────────────────────────────────
 var jumps_remaining: int = MAX_JUMPS
 var is_tag: bool = false
+var stun_timer: float = 0.0
+
+# ── Debug ────────────────────────────────────────────────────────────────────
+@export var is_dummy: bool = false # Sadece test için; ikinci oyuncuyu pasif yapar
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -56,6 +62,15 @@ func _ready() -> void:
 # ══════════════════════════════════════════════════════════════════════════════
 
 func _physics_process(delta: float) -> void:
+	# Dummy modda input alınmaz; sadece fizik çalışır
+	if is_dummy:
+		_apply_gravity(delta)
+		# Dummy input almaz ama knockback hızını frenlemesi gerekir
+		velocity.x = move_toward(velocity.x, 0.0, SPEED * 4.0 * delta)
+		move_and_slide()
+		_update_animation()
+		return
+
 	var was_on_floor: bool = is_on_floor()
 
 	_apply_gravity(delta)
@@ -70,7 +85,7 @@ func _physics_process(delta: float) -> void:
 # State Machine — Dispatch
 # ══════════════════════════════════════════════════════════════════════════════
 
-func _process_state(_delta: float) -> void:
+func _process_state(delta: float) -> void:
 	match state:
 		State.IDLE:
 			_state_idle()
@@ -82,6 +97,8 @@ func _process_state(_delta: float) -> void:
 			_state_falling()
 		State.PUNCHING:
 			_state_punching()
+		State.STUNNED:
+			_state_stunned(delta)
 
 
 func _transition(new_state: State) -> void:
@@ -145,8 +162,24 @@ func _state_falling() -> void:
 
 
 func _state_punching() -> void:
-	# Yumruk süresince yatay hareketi durdur; state _on_player_animation_finished'da biter
-	velocity.x = move_toward(velocity.x, 0.0, SPEED)
+	# Yumruk atarken normal yatay hareket devam eder
+	var direction: float = Input.get_axis("Left", "Right")
+	if direction != 0.0:
+		velocity.x = direction * SPEED
+	else:
+		velocity.x = move_toward(velocity.x, 0.0, SPEED)
+
+
+func _state_stunned(delta: float) -> void:
+	# Knockback hızını stun süresince früne et (px/s², delta ile çarpılır)
+	const STUN_FRICTION: float = 1400.0
+	velocity.x = move_toward(velocity.x, 0.0, STUN_FRICTION * delta)
+	stun_timer -= delta
+	if stun_timer <= 0.0:
+		if is_on_floor():
+			_transition(State.IDLE)
+		else:
+			_transition(State.FALLING)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -249,6 +282,8 @@ func _perform_punch() -> void:
 
 func receive_knockback(force: Vector2) -> void:
 	velocity = force
+	stun_timer = STUN_DURATION
+	_transition(State.STUNNED)
 
 
 func _apply_knockback_to(body: Node2D) -> void:
@@ -298,6 +333,9 @@ func _on_player_animation_finished() -> void:
 
 
 func _on_punch_hitbox_body_entered(body: Node2D) -> void:
+	# Gerçekten yumruk state'indeyken tetiklenmediyse yoksay
+	if state != State.PUNCHING:
+		return
 	if body == self:
 		return
 

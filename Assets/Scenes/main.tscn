@@ -12,4 +12,8 @@ script = ExtResource("3_elf4b")
 [node name="Map" parent="." unique_id=1530014150 instance=ExtResource("2_elf4b")]
 
 [node name="player" parent="." unique_id=551959532 instance=ExtResource("3_guoxd")]
-position = Vector2(111, 243)
+position = Vector2(97, 286)
+
+[node name="player2" parent="." unique_id=1495996232 instance=ExtResource("3_guoxd")]
+position = Vector2(206, 273)
+is_dummy = true

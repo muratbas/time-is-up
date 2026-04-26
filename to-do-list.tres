@@ -5,9 +5,9 @@
 [resource]
 script = ExtResource("1_2iswm")
 tasks = [Dictionary[String, Variant]({
-"completed": false,
+"completed": true,
 "name": "hitboxlar bozuk"
 }), Dictionary[String, Variant]({
-"completed": false,
+"completed": true,
 "name": "karakterler iç içe geçebilmeli"
 })]

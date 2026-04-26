@@ -59,10 +59,6 @@ region = Rect2(0, 192, 32, 32)
 atlas = ExtResource("3_uiccu")
 region = Rect2(32, 192, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_y8flv"]
-atlas = ExtResource("3_uiccu")
-region = Rect2(64, 192, 32, 32)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_ilw6o"]
 atlas = ExtResource("3_uiccu")
 region = Rect2(96, 192, 32, 32)
@@ -208,9 +204,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_47lkq")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_y8flv")
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ilw6o")
@@ -366,8 +359,8 @@ animations = [{
 "speed": 15.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_uiccu"]
-size = Vector2(9.5, 29)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cjiiu"]
+size = Vector2(17.375, 15.75)
 
 [node name="player" type="CharacterBody2D" unique_id=551959532 groups=["players"]]
 collision_layer = 2
@@ -378,8 +371,10 @@ script = ExtResource("1_ibqoo")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=865814971]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_mlk2r")
-animation = &"fall"
+animation = &"punch"
 autoplay = "idle"
+frame = 2
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1423131883]
 position = Vector2(0, 1)
@@ -406,11 +401,11 @@ scale = Vector2(0.75, 0.78125)
 sprite_frames = SubResource("SpriteFrames_v77ya")
 animation = &"puff"
 
-[node name="PunchHitbox" type="Area2D" parent="." unique_id=737731233]
-collision_layer = 2
+[node name="PunchHitbox" type="Area2D" parent="." unique_id=271657782]
+collision_layer = 4
+collision_mask = 2
 monitoring = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PunchHitbox" unique_id=1594711459]
-position = Vector2(10, 1)
-shape = SubResource("RectangleShape2D_uiccu")
-disabled = true
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PunchHitbox" unique_id=2010465362]
+position = Vector2(7.6875, -1)
+shape = SubResource("RectangleShape2D_cjiiu")
