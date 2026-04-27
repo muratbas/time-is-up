@@ -8,6 +8,10 @@ extends CharacterBody2D
 @onready var tnt_marker: Marker2D = $Marker2D
 @onready var tnt_sprite: AnimatedSprite2D = $Marker2D/AnimatedSprite2D
 
+@export var player_id := 1:
+	set(id):
+		player_id = id
+
 # ── Sabitler ─────────────────────────────────────────────────────────────────
 const SPEED: float = 280.0
 const JUMP_VELOCITY: float = -600.0 # h = v²/(2g) → ~72px, yerçekimi 2500 ile

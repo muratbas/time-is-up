@@ -858,14 +858,8 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_fxcrr")
 text = "Çıkış"
 flat = true
 
-[node name="Control" type="Control" parent="Panel" unique_id=1823828459]
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
 [node name="menuMusic" type="AudioStreamPlayer" parent="." unique_id=836007143]
 stream = ExtResource("5_nq0pn")
-autoplay = true
 parameters/looping = false
 
 [connection signal="pressed" from="Panel/menubuttons/HostGame" to="GameHandler" method="become_host"]
