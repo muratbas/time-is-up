@@ -7,11 +7,13 @@ extends CharacterBody2D
 @onready var punch_hitbox: Area2D = $PunchHitbox
 @onready var tnt_marker: Marker2D = $Marker2D
 @onready var tnt_sprite: AnimatedSprite2D = $Marker2D/AnimatedSprite2D
+@onready var input_sync: MultiplayerSynchronizer = %InputSynchronizer
 
 @export var player_id := 1:
 	set(id):
 		player_id = id
-
+		%InputSynchronizer.set_multiplayer_authority(id)
+		
 # ── Sabitler ─────────────────────────────────────────────────────────────────
 const SPEED: float = 280.0
 const JUMP_VELOCITY: float = -600.0 # h = v²/(2g) → ~72px, yerçekimi 2500 ile
@@ -20,6 +22,18 @@ const MAX_JUMPS: int = 1
 const PUNCH_FORCE: float = 380.0
 const PUNCH_VERTICAL: float = -120.0
 const STUN_DURATION: float = 0.3
+const PLAYER_COLORS: Array[Color] = [
+	Color("#FF6B6B"), # Mercan Kırmızı
+	Color("#4ECDC4"), # Turkuaz
+	Color("#FFE66D"), # Altın Sarı
+	Color("#A8E6CF"), # Mint Yeşil
+	Color("#FF8B94"), # Pembe
+	Color("#6C5CE7"), # Mor
+	Color("#00B4D8"), # Gök Mavisi
+	Color("#F4A261"), # Turuncu
+	Color("#B5EAD7"), # Açık Yeşil
+	Color("#FFDAC1"), # şeftali
+]
 
 # ── Sinyal ───────────────────────────────────────────────────────────────────
 ## Ebelik başka oyuncuya geçtiğinde üst sistemi bilgilendirmek için
@@ -51,6 +65,14 @@ var stun_timer: float = 0.0
 # ══════════════════════════════════════════════════════════════════════════════
 
 func _ready() -> void:
+	if multiplayer.get_unique_id() == player_id:
+		$Camera2D.make_current()
+	else:
+		$Camera2D.enabled = false
+
+	# player_id deterministik olduğu için tüm peerlarda aynı renk hesaplanır
+	animated_sprite.modulate = PLAYER_COLORS[player_id % PLAYER_COLORS.size()]
+
 	double_jump_effect.visible = false
 	tnt_marker.visible = false
 	punch_hitbox.monitoring = false
@@ -119,7 +141,7 @@ func _state_idle() -> void:
 	_check_punch()
 	_check_jump()
 
-	var direction: float = Input.get_axis("Left", "Right")
+	var direction: float = input_sync.input_direction
 	if direction != 0.0:
 		_transition(State.RUNNING)
 	elif not is_on_floor():
@@ -127,7 +149,7 @@ func _state_idle() -> void:
 
 
 func _state_running() -> void:
-	var direction: float = Input.get_axis("Left", "Right")
+	var direction: float = input_sync.input_direction
 	velocity.x = direction * SPEED
 
 	_check_punch()
@@ -140,20 +162,19 @@ func _state_running() -> void:
 
 
 func _state_jumping() -> void:
-	var direction: float = Input.get_axis("Left", "Right")
+	var direction: float = input_sync.input_direction
 	velocity.x = direction * SPEED if direction != 0.0 else move_toward(velocity.x, 0.0, SPEED)
 
 	_check_punch()
 	_check_jump()
 	_check_jump_cut()
 
-	# Zıplama doruk noktasını geçince düşme state'ine geç
 	if velocity.y >= 0.0:
 		_transition(State.FALLING)
 
 
 func _state_falling() -> void:
-	var direction: float = Input.get_axis("Left", "Right")
+	var direction: float = input_sync.input_direction
 	velocity.x = direction * SPEED if direction != 0.0 else move_toward(velocity.x, 0.0, SPEED)
 
 	_check_punch()
@@ -161,13 +182,12 @@ func _state_falling() -> void:
 
 	if is_on_floor():
 		jumps_remaining = MAX_JUMPS
-		var move_dir: float = Input.get_axis("Left", "Right")
-		_transition(State.RUNNING if move_dir != 0.0 else State.IDLE)
+		_transition(State.RUNNING if input_sync.input_direction != 0.0 else State.IDLE)
 
 
 func _state_punching() -> void:
 	# Yumruk atarken normal yatay hareket devam eder
-	var direction: float = Input.get_axis("Left", "Right")
+	var direction: float = input_sync.input_direction
 	if direction != 0.0:
 		velocity.x = direction * SPEED
 	else:
@@ -191,28 +211,18 @@ func _state_stunned(delta: float) -> void:
 # ══════════════════════════════════════════════════════════════════════════════
 
 func _check_punch() -> void:
-	if Input.is_action_just_pressed("Punch"):
-		_perform_punch()
+	# Punch RPC tarafından doğrudan _perform_punch() çağrılır; bu fonksiyon artık kullanılmıyor
+	pass
 
 
 func _check_jump() -> void:
-	if not Input.is_action_just_pressed("Jump"):
-		return
-
-	var coyote_available: bool = not coyote_timer.is_stopped()
-
-	if is_on_floor() or coyote_available:
-		velocity.y = JUMP_VELOCITY
-		coyote_timer.stop()
-		_transition(State.JUMPING)
-	elif jumps_remaining > 0:
-		_execute_double_jump()
+	# Jump RPC tarafından doğrudan tetiklenir; bu fonksiyon artık kullanılmıyor
+	pass
 
 
 func _check_jump_cut() -> void:
-	# Düğme erken bırakılırsa zıplama kesilerek değişken yükseklik sağlanır
-	if Input.is_action_just_released("Jump") and velocity.y < 0.0:
-		velocity.y *= JUMP_CUT_MULTIPLIER
+	# RPC tarafından tetiklenir; bu fonksiyon artık kullanılmıyor
+	pass
 
 
 func _execute_double_jump() -> void:

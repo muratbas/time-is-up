@@ -1,24 +1,17 @@
 [gd_scene format=3 uid="uid://88ips82anuhv"]
 
 [ext_resource type="Script" uid="uid://xkrdd3jahxma" path="res://Assets/Scripts/game_handler.gd" id="1_guoxd"]
+[ext_resource type="Script" uid="uid://6s8ke2ffe34a" path="res://Assets/Scripts/main.gd" id="1_rvsrt"]
 [ext_resource type="PackedScene" uid="uid://k14y6g315785" path="res://Assets/Scenes/Levels/map.tscn" id="2_elf4b"]
-[ext_resource type="PackedScene" uid="uid://8s325ht8ke3a" path="res://Assets/Scenes/Char/player.tscn" id="3_guoxd"]
 [ext_resource type="AudioStream" uid="uid://b7lnv2ooti6nr" path="res://Assets/SFX/mainmenu.mp3" id="4_guoxd"]
 
 [node name="Main" type="Node2D" unique_id=847079045]
+script = ExtResource("1_rvsrt")
 
 [node name="GameHandler" type="Node" parent="." unique_id=2018636484]
 script = ExtResource("1_guoxd")
 
 [node name="Map" parent="." unique_id=1530014150 instance=ExtResource("2_elf4b")]
-
-[node name="player" parent="." unique_id=551959532 instance=ExtResource("3_guoxd")]
-position = Vector2(97, 286)
-
-[node name="dummy" parent="." unique_id=1495996232 instance=ExtResource("3_guoxd")]
-modulate = Color(0.07999998, 0.31, 1, 1)
-position = Vector2(206, 273)
-is_dummy = true
 
 [node name="menuMusic" type="AudioStreamPlayer" parent="." unique_id=560640561]
 stream = ExtResource("4_guoxd")

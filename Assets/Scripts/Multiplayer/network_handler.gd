@@ -5,12 +5,20 @@ const SERVER_IP = "localhost"
 
 var player_scene = preload("res://Assets/Scenes/Char/player.tscn")
 
-var _players_spawn_node: Node2D
+var _players_spawn_node
+
+var is_host = false
+
+func setup_multiplayer() -> void:
+	if is_host:
+		become_host()
+	else:
+		join_game()
 
 func become_host():
 	print("host oldum")
 	
-	_players_spawn_node = get_tree().get_root().get_node("Players")
+	_players_spawn_node = get_tree().current_scene.get_node("Players")
 
 	var server_peer = ENetMultiplayerPeer.new()
 	server_peer.create_server(PORT)
@@ -30,6 +38,8 @@ func join_game():
 
 	var client_peer = ENetMultiplayerPeer.new()
 	client_peer.create_client(SERVER_IP, PORT)
+
+	_players_spawn_node = get_tree().current_scene.get_node("Players")
 
 	multiplayer.multiplayer_peer = client_peer
 
@@ -55,5 +65,6 @@ func _remove_player(id: int):
 
 func _remove_single_player():
 	print("Remove single player")
-	var player_to_remove = get_tree().get_current_scene().get_node("Player")
-	player_to_remove.queue_free()
+	var player_to_remove = get_tree().current_scene.get_node_or_null("Player")
+	if player_to_remove:
+		player_to_remove.queue_free()

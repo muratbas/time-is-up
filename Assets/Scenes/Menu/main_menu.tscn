@@ -818,26 +818,21 @@ offset_bottom = 158.0
 text = "time is up!"
 label_settings = SubResource("LabelSettings_cuhuu")
 
-[node name="Panel" type="Panel" parent="." unique_id=311685148]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="menubuttons" type="VBoxContainer" parent="Panel" unique_id=1510427431]
+[node name="menubuttons" type="VBoxContainer" parent="." unique_id=1510427431]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
 anchor_top = 0.48400003
 anchor_right = 0.5
 anchor_bottom = 0.48400003
-offset_left = 256.5
-offset_top = 110.14
-offset_right = 343.5
-offset_bottom = 211.14
+offset_left = -43.5
+offset_top = -44.740005
+offset_right = 43.5
+offset_bottom = 56.259995
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HostGame" type="Button" parent="Panel/menubuttons" unique_id=1810674089]
+[node name="HostGame" type="Button" parent="menubuttons" unique_id=1810674089]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_nq0pn")
 theme_override_styles/normal = SubResource("StyleBoxFlat_7tyjs")
@@ -845,13 +840,13 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_nq0pn")
 text = "Oyun Kur"
 flat = true
 
-[node name="JoinGame" type="Button" parent="Panel/menubuttons" unique_id=1662023884]
+[node name="JoinGame" type="Button" parent="menubuttons" unique_id=1662023884]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_nq0pn")
 text = "Bağlan"
 flat = true
 
-[node name="Quit" type="Button" parent="Panel/menubuttons" unique_id=848115044]
+[node name="Quit" type="Button" parent="menubuttons" unique_id=848115044]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_nq0pn")
 theme_override_styles/normal = SubResource("StyleBoxFlat_fxcrr")
@@ -862,6 +857,6 @@ flat = true
 stream = ExtResource("5_nq0pn")
 parameters/looping = false
 
-[connection signal="pressed" from="Panel/menubuttons/HostGame" to="GameHandler" method="become_host"]
-[connection signal="pressed" from="Panel/menubuttons/JoinGame" to="GameHandler" method="join_game"]
-[connection signal="pressed" from="Panel/menubuttons/Quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="menubuttons/HostGame" to="GameHandler" method="become_host"]
+[connection signal="pressed" from="menubuttons/JoinGame" to="GameHandler" method="join_game"]
+[connection signal="pressed" from="menubuttons/Quit" to="." method="_on_quit_pressed"]
