@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cc0oemfpmb0lk" path="res://Assets/Scripts/main_menu.gd" id="1_cuhuu"]
 [ext_resource type="Texture2D" uid="uid://bucus8ssfwgsg" path="res://Assets/Sprites/maps/testarena.png" id="1_dy04a"]
 [ext_resource type="Texture2D" uid="uid://cmcomj7jj8m1v" path="res://Assets/Sprites/images/Tilemap/old_growth_tileset-export.png" id="2_7tyjs"]
+[ext_resource type="Script" uid="uid://xkrdd3jahxma" path="res://Assets/Scripts/game_handler.gd" id="2_fxcrr"]
 [ext_resource type="FontFile" uid="uid://gogqic76ay" path="res://Assets/Fonts/KiwiSoda.ttf" id="4_nq0pn"]
 [ext_resource type="AudioStream" uid="uid://b7lnv2ooti6nr" path="res://Assets/SFX/mainmenu.mp3" id="5_nq0pn"]
 
@@ -788,6 +789,9 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_cuhuu")
 
+[node name="GameHandler" type="Node" parent="." unique_id=261429465]
+script = ExtResource("2_fxcrr")
+
 [node name="TileMapLayers" type="Node2D" parent="." unique_id=2139911257]
 
 [node name="Background" type="TileMapLayer" parent="TileMapLayers" unique_id=1844056769]
@@ -814,39 +818,56 @@ offset_bottom = 158.0
 text = "time is up!"
 label_settings = SubResource("LabelSettings_cuhuu")
 
-[node name="menubuttons" type="VBoxContainer" parent="." unique_id=1510427431]
+[node name="Panel" type="Panel" parent="." unique_id=311685148]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="menubuttons" type="VBoxContainer" parent="Panel" unique_id=1510427431]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
 anchor_top = 0.48400003
 anchor_right = 0.5
 anchor_bottom = 0.48400003
-offset_left = -43.5
-offset_top = -44.740005
-offset_right = 43.5
-offset_bottom = 56.259995
+offset_left = 256.5
+offset_top = 110.14
+offset_right = 343.5
+offset_bottom = 211.14
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Play" type="Button" parent="menubuttons" unique_id=1810674089]
+[node name="HostGame" type="Button" parent="Panel/menubuttons" unique_id=1810674089]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_nq0pn")
 theme_override_styles/normal = SubResource("StyleBoxFlat_7tyjs")
 theme_override_styles/hover = SubResource("StyleBoxFlat_nq0pn")
-text = "Yeni Oyun"
+text = "Oyun Kur"
 flat = true
 
-[node name="Quit" type="Button" parent="menubuttons" unique_id=848115044]
+[node name="JoinGame" type="Button" parent="Panel/menubuttons" unique_id=1662023884]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_nq0pn")
+text = "Bağlan"
+flat = true
+
+[node name="Quit" type="Button" parent="Panel/menubuttons" unique_id=848115044]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_nq0pn")
 theme_override_styles/normal = SubResource("StyleBoxFlat_fxcrr")
 text = "Çıkış"
 flat = true
 
+[node name="Control" type="Control" parent="Panel" unique_id=1823828459]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
 [node name="menuMusic" type="AudioStreamPlayer" parent="." unique_id=836007143]
 stream = ExtResource("5_nq0pn")
 autoplay = true
 parameters/looping = false
 
-[connection signal="pressed" from="menubuttons/Play" to="." method="_on_play_pressed"]
-[connection signal="pressed" from="menubuttons/Quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="Panel/menubuttons/HostGame" to="GameHandler" method="become_host"]
+[connection signal="pressed" from="Panel/menubuttons/JoinGame" to="GameHandler" method="join_game"]
+[connection signal="pressed" from="Panel/menubuttons/Quit" to="." method="_on_quit_pressed"]

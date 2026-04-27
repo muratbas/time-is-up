@@ -360,7 +360,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cjiiu"]
-size = Vector2(17.375, 15.75)
+size = Vector2(16, 15.75)
 
 [node name="player" type="CharacterBody2D" unique_id=551959532 groups=["players"]]
 collision_layer = 2
@@ -407,5 +407,5 @@ collision_mask = 2
 monitoring = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PunchHitbox" unique_id=2010465362]
-position = Vector2(7.6875, -1)
+position = Vector2(8, -2)
 shape = SubResource("RectangleShape2D_cjiiu")

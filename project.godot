@@ -15,21 +15,22 @@ run/main_scene="uid://bb0oljg8x4cnh"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
+[audio]
+
+buses/default_bus_layout="uid://prnbvk1jlpiy"
+
 [autoload]
 
 GameStateEvents="*uid://m6itdbeyjddt"
-NetworkHandler="uid://b86jcrbptcfat"
-
-[debug]
-
-settings/stdout/print_fps=true
+NetworkHandler="*uid://b2gkg3t04mhak"
 
 [display]
 
 window/size/viewport_width=640
 window/size/viewport_height=360
-window/size/window_width_override=1920
-window/size/window_height_override=1080
+window/size/always_on_top=true
+window/size/window_width_override=1280
+window/size/window_height_override=720
 window/stretch/mode="canvas_items"
 
 [editor_plugins]
