@@ -80,8 +80,8 @@ func _ready() -> void:
 
 	if multiplayer.get_unique_id() == player_id:
 		$Camera2D.make_current()
-		# Kendi karakterimize kendi nick'imizi ata; MultiplayerSynchronizer yayar
-		nickname = PlayerData.nickname
+		# Kendi nick'ini tüm peerlara RPC ile gönder; Synchronizer yerine tek seferlik RPC daha güvenli
+		_rpc_set_nickname.rpc(PlayerData.nickname)
 	else:
 		$Camera2D.enabled = false
 
@@ -96,8 +96,15 @@ func _ready() -> void:
 	animated_sprite.animation_finished.connect(_on_player_animation_finished)
 	punch_hitbox.body_entered.connect(_on_punch_hitbox_body_entered)
 
-	# Setter'ı yeniden tetikleyerek label'ın truncation mantığından geçmesini sağla
-	nickname = nickname
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Nick Senkronizasyonu
+# ══════════════════════════════════════════════════════════════════════════════
+
+@rpc("any_peer", "call_local", "reliable")
+func _rpc_set_nickname(new_nickname: String) -> void:
+	# Her peer bu oyuncu node'unda nick'i günceller
+	nickname = new_nickname
 
 
 # ══════════════════════════════════════════════════════════════════════════════
