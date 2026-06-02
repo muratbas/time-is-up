@@ -65,6 +65,8 @@ var stun_timer: float = 0.0
 # ══════════════════════════════════════════════════════════════════════════════
 
 func _ready() -> void:
+	add_to_group("players")
+
 	if multiplayer.get_unique_id() == player_id:
 		$Camera2D.make_current()
 	else:
@@ -79,7 +81,6 @@ func _ready() -> void:
 
 	double_jump_effect.animation_finished.connect(_on_double_jump_animation_finished)
 	animated_sprite.animation_finished.connect(_on_player_animation_finished)
-	# Kod ile bağlanarak kopuk sinyal riskini ortadan kaldırır
 	punch_hitbox.body_entered.connect(_on_punch_hitbox_body_entered)
 
 
@@ -266,6 +267,9 @@ func _update_animation() -> void:
 			animated_sprite.play("jump")
 		State.FALLING:
 			animated_sprite.play("fall")
+		State.STUNNED:
+			# Stun süresince idle animasyonu oynatılır
+			animated_sprite.play("tagidle" if is_tag else "idle")
 		State.PUNCHING:
 			pass # Animasyon _perform_punch() içinde başlatılır, bitmesini bekle
 
@@ -319,7 +323,7 @@ func become_tag() -> void:
 	tnt_sprite.play("TNT")
 
 
-func _lose_tag() -> void:
+func lose_tag() -> void:
 	is_tag = false
 	tnt_marker.visible = false
 	tnt_sprite.stop()
@@ -334,13 +338,11 @@ func _on_double_jump_animation_finished() -> void:
 
 
 func _on_player_animation_finished() -> void:
-	# Yumruk animasyonu bittiğinde hitbox kapatılır ve uygun harekete dönülür
 	var current: String = animated_sprite.animation
 	if current == "punch" or current == "tagpunch":
 		punch_hitbox.monitoring = false
-		# Yere basıyorsa IDLE/RUNNING'e, havadaysa FALLING'e geç
 		if is_on_floor():
-			var dir: float = Input.get_axis("Left", "Right")
+			var dir: float = input_sync.input_direction
 			_transition(State.RUNNING if dir != 0.0 else State.IDLE)
 		else:
 			_transition(State.FALLING)
@@ -358,5 +360,5 @@ func _on_punch_hitbox_body_entered(body: Node2D) -> void:
 	# Ebelik transferi yalnızca ebe olan oyuncu yumruk attığında gerçekleşir
 	if is_tag and body.has_method("become_tag"):
 		body.become_tag()
-		emit_signal("tag_transferred", self , body)
-		_lose_tag()
+		emit_signal("tag_transferred", self, body)
+		lose_tag()

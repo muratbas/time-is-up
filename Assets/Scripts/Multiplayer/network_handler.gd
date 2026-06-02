@@ -1,7 +1,7 @@
 extends Node
 
 const PORT = 8080
-const SERVER_IP = "localhost"
+const SERVER_IP = "172.20.10.4"
 
 var player_scene = preload("res://Assets/Scenes/Char/player.tscn")
 
@@ -46,21 +46,30 @@ func join_game():
 	_remove_single_player()
 
 
-func _add_player_to_game(id: int):
+func _add_player_to_game(id: int) -> void:
 	print("oyuncu %s katıldı" % id)
 
-	var player_to_add = player_scene.instantiate()
+	var player_to_add: Node2D = player_scene.instantiate()
 	player_to_add.player_id = id
 	player_to_add.name = str(id)
-
 	_players_spawn_node.add_child(player_to_add, true)
 
+	# GameManager'a yeni oyuncu katıldığını bildir
+	var gm: Node = get_tree().get_first_node_in_group("game_manager")
+	if gm:
+		gm.on_player_joined()
 
-func _remove_player(id: int):
+
+func _remove_player(id: int) -> void:
 	print("oyuncu %s ayrıldı" % id)
 	if not _players_spawn_node.has_node(str(id)):
 		return
 	_players_spawn_node.get_node(str(id)).queue_free()
+
+	# GameManager'a oyuncu ayrıldığını bildir
+	var gm: Node = get_tree().get_first_node_in_group("game_manager")
+	if gm:
+		gm.on_player_left()
 
 
 func _remove_single_player():

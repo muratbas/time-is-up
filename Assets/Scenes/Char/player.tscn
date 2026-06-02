@@ -5,8 +5,8 @@
 [ext_resource type="Texture2D" uid="uid://3exc0eip7ggt" path="res://Assets/Sprites/char/karakterspritesheet.png" id="2_ibqoo"]
 [ext_resource type="Texture2D" uid="uid://bw0yvi70670la" path="res://Assets/Sprites/items/tntsprite.png" id="3_71wdy"]
 [ext_resource type="Texture2D" uid="uid://c7cynlxvhktht" path="res://Assets/Sprites/char/time_is_up_player_base (3).png" id="3_uiccu"]
-[ext_resource type="Texture2D" uid="uid://dbeoqcw8hv2be" path="res://Assets/Sprites/char/carrypunch_carrywall.png" id="4_cjiiu"]
 [ext_resource type="Texture2D" uid="uid://gwis1dakpuql" path="res://Assets/Sprites/char/double_jump_effect.png" id="4_ncuj1"]
+[ext_resource type="Texture2D" uid="uid://vbv34drk2qr2" path="res://Assets/Sprites/char/spritesheet.png" id="5_da8pg"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_da8pg"]
 properties/0/path = NodePath(".:player_id")
@@ -114,20 +114,20 @@ region = Rect2(64, 128, 32, 32)
 atlas = ExtResource("2_ibqoo")
 region = Rect2(96, 128, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_wr3qa"]
-atlas = ExtResource("4_cjiiu")
+[sub_resource type="AtlasTexture" id="AtlasTexture_y8flv"]
+atlas = ExtResource("5_da8pg")
 region = Rect2(0, 224, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_tsfvx"]
-atlas = ExtResource("4_cjiiu")
+[sub_resource type="AtlasTexture" id="AtlasTexture_wr3qa"]
+atlas = ExtResource("5_da8pg")
 region = Rect2(32, 224, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_32ax8"]
-atlas = ExtResource("4_cjiiu")
+[sub_resource type="AtlasTexture" id="AtlasTexture_tsfvx"]
+atlas = ExtResource("5_da8pg")
 region = Rect2(64, 224, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_idtj1"]
-atlas = ExtResource("4_cjiiu")
+[sub_resource type="AtlasTexture" id="AtlasTexture_32ax8"]
+atlas = ExtResource("5_da8pg")
 region = Rect2(96, 224, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_oqnw4"]
@@ -270,6 +270,9 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_y8flv")
+}, {
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_wr3qa")
 }, {
 "duration": 1.0,
@@ -277,13 +280,10 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_32ax8")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idtj1")
 }],
 "loop": false,
 "name": &"tagpunch",
-"speed": 10.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -390,10 +390,8 @@ script = ExtResource("2_da8pg")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=865814971]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_mlk2r")
-animation = &"punch"
+animation = &"run"
 autoplay = "idle"
-frame = 2
-frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1423131883]
 position = Vector2(0, 1)

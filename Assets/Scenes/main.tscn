@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://xkrdd3jahxma" path="res://Assets/Scripts/game_handler.gd" id="1_guoxd"]
 [ext_resource type="Script" uid="uid://6s8ke2ffe34a" path="res://Assets/Scripts/main.gd" id="1_rvsrt"]
 [ext_resource type="PackedScene" uid="uid://k14y6g315785" path="res://Assets/Scenes/Levels/map.tscn" id="2_elf4b"]
+[ext_resource type="Script" uid="uid://825laqg6vakq" path="res://Assets/Scripts/game_manager.gd" id="3_rvsrt"]
 [ext_resource type="AudioStream" uid="uid://b7lnv2ooti6nr" path="res://Assets/SFX/mainmenu.mp3" id="4_guoxd"]
 
 [node name="Main" type="Node2D" unique_id=847079045]
@@ -10,6 +11,9 @@ script = ExtResource("1_rvsrt")
 
 [node name="GameHandler" type="Node" parent="." unique_id=2018636484]
 script = ExtResource("1_guoxd")
+
+[node name="GameManager" type="Node" parent="." unique_id=102626354]
+script = ExtResource("3_rvsrt")
 
 [node name="Map" parent="." unique_id=1530014150 instance=ExtResource("2_elf4b")]
 

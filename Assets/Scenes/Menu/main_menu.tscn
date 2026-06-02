@@ -775,9 +775,6 @@ shadow_color = Color(0.52, 0.52, 0.52, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7tyjs"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nq0pn"]
-bg_color = Color(0.41804653, 0.68150425, 0.28873608, 1)
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fxcrr"]
 
 [node name="MainMenu" type="Control" unique_id=377273684]
@@ -836,7 +833,6 @@ grow_vertical = 2
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_nq0pn")
 theme_override_styles/normal = SubResource("StyleBoxFlat_7tyjs")
-theme_override_styles/hover = SubResource("StyleBoxFlat_nq0pn")
 text = "Oyun Kur"
 flat = true
 
