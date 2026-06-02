@@ -849,6 +849,14 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_fxcrr")
 text = "Çıkış"
 flat = true
 
+[node name="UsernameInput" type="LineEdit" parent="." unique_id=494610568]
+layout_mode = 0
+offset_left = 244.0
+offset_top = 203.0
+offset_right = 404.0
+offset_bottom = 234.0
+placeholder_text = "Kullanıcı Adın.."
+
 [node name="menuMusic" type="AudioStreamPlayer" parent="." unique_id=836007143]
 stream = ExtResource("5_nq0pn")
 parameters/looping = false

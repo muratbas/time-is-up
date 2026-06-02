@@ -8,11 +8,22 @@ extends CharacterBody2D
 @onready var tnt_marker: Marker2D = $Marker2D
 @onready var tnt_sprite: AnimatedSprite2D = $Marker2D/AnimatedSprite2D
 @onready var input_sync: MultiplayerSynchronizer = %InputSynchronizer
+@onready var nickname_label: Label = $NicknameLabel
 
 @export var player_id := 1:
 	set(id):
 		player_id = id
 		%InputSynchronizer.set_multiplayer_authority(id)
+
+# Nick senkronize edilir; set çağrısında label da güncellenir
+const DISPLAY_MAX_LENGTH: int = 8
+
+var nickname: String = "":
+	set(value):
+		nickname = value
+		if is_node_ready() and nickname_label:
+			# Karakter üzerinde çok uzun yazı taşmasın diye kısaltılır
+			nickname_label.text = value.left(DISPLAY_MAX_LENGTH) + ("..." if value.length() > DISPLAY_MAX_LENGTH else "")
 		
 # ── Sabitler ─────────────────────────────────────────────────────────────────
 const SPEED: float = 280.0
@@ -69,6 +80,8 @@ func _ready() -> void:
 
 	if multiplayer.get_unique_id() == player_id:
 		$Camera2D.make_current()
+		# Kendi karakterimize kendi nick'imizi ata; MultiplayerSynchronizer yayar
+		nickname = PlayerData.nickname
 	else:
 		$Camera2D.enabled = false
 
@@ -82,6 +95,9 @@ func _ready() -> void:
 	double_jump_effect.animation_finished.connect(_on_double_jump_animation_finished)
 	animated_sprite.animation_finished.connect(_on_player_animation_finished)
 	punch_hitbox.body_entered.connect(_on_punch_hitbox_body_entered)
+
+	# Setter'ı yeniden tetikleyerek label'ın truncation mantığından geçmesini sağla
+	nickname = nickname
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -360,5 +376,5 @@ func _on_punch_hitbox_body_entered(body: Node2D) -> void:
 	# Ebelik transferi yalnızca ebe olan oyuncu yumruk attığında gerçekleşir
 	if is_tag and body.has_method("become_tag"):
 		body.become_tag()
-		emit_signal("tag_transferred", self, body)
+		emit_signal("tag_transferred", self , body)
 		lose_tag()

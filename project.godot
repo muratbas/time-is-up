@@ -21,8 +21,8 @@ buses/default_bus_layout="uid://prnbvk1jlpiy"
 
 [autoload]
 
-GameStateEvents="*uid://m6itdbeyjddt"
 NetworkHandler="*uid://b2gkg3t04mhak"
+PlayerData="*uid://bfrnw4ivdswy1"
 
 [display]
 
