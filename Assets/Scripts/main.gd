@@ -1,5 +1,6 @@
-extends Node2D # veya senin main node'un neyse (Node3D, Node vb.)
+extends Node2D
 
-func _ready():
-    # Sahne yüklendiğinde multiplayer kurulumunu başlat
-    NetworkHandler.setup_multiplayer()
+func _ready() -> void:
+	# Oyun sahnesine geçince oyuncuları Players node'una spawn et
+	var players_node: Node = $Players
+	NetworkHandler.spawn_players_in_game(players_node)

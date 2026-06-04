@@ -1,0 +1,138 @@
+[gd_scene format=3 uid="uid://oilul7vcomrf"]
+
+[ext_resource type="Script" uid="uid://c4obgxvhe7kqf" path="res://Assets/Scripts/main_menu2.gd" id="1_eaxjr"]
+[ext_resource type="Texture2D" uid="uid://csct1ecbxdcvb" path="res://Assets/Sprites/images/Background/time_is_up_main_menu_bg.svg" id="2_a1pxj"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eaxjr"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 11
+corner_radius_top_right = 11
+corner_radius_bottom_right = 11
+corner_radius_bottom_left = 11
+corner_detail = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u3gqi"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 11
+corner_radius_top_right = 11
+corner_radius_bottom_right = 11
+corner_radius_bottom_left = 11
+corner_detail = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hmrfg"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 11
+corner_radius_top_right = 11
+corner_radius_bottom_right = 11
+corner_radius_bottom_left = 11
+corner_detail = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_khkix"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 11
+corner_radius_top_right = 11
+corner_radius_bottom_right = 11
+corner_radius_bottom_left = 11
+corner_detail = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a1pxj"]
+bg_color = Color(1, 1, 1, 1)
+
+[node name="Main Menu" type="Node2D" unique_id=1118124919]
+script = ExtResource("1_eaxjr")
+
+[node name="background" type="TextureRect" parent="." unique_id=843412908]
+offset_right = 624.0
+offset_bottom = 339.0
+texture = ExtResource("2_a1pxj")
+expand_mode = 1
+
+[node name="button_manager" type="Control" parent="." unique_id=1222568077]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="button_manager" unique_id=974352126]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 18.0
+offset_top = 61.0
+offset_right = 130.0
+offset_bottom = 165.0
+grow_vertical = 2
+
+[node name="Host" type="Button" parent="button_manager/VBoxContainer" unique_id=1456897785]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_eaxjr")
+text = "Oyun Kur"
+
+[node name="Join" type="Button" parent="button_manager/VBoxContainer" unique_id=82405761]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_u3gqi")
+text = "Bağlan"
+
+[node name="Options" type="Button" parent="button_manager/VBoxContainer" unique_id=208739287]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_hmrfg")
+text = "Ayarlar"
+
+[node name="Quit" type="Button" parent="button_manager/VBoxContainer" unique_id=1081114852]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_khkix")
+text = "Çıkış"
+
+[node name="IpDisplayLabel" type="Label" parent="button_manager" unique_id=1034640792]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 166.0
+offset_top = 200.0
+offset_right = 296.0
+offset_bottom = 228.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_a1pxj")
+
+[node name="IpInput" type="LineEdit" parent="button_manager" unique_id=1370129984]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 17.0
+offset_top = 196.0
+offset_right = 160.0
+offset_bottom = 227.0
+placeholder_text = "Sunucu IP...."
+max_length = 15
+
+[node name="IpErrorLabel" type="Label" parent="button_manager" unique_id=301060577]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="UsernameInput" type="LineEdit" parent="button_manager" unique_id=706608421]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 16.0
+offset_top = 233.0
+offset_right = 160.0
+offset_bottom = 264.0
+placeholder_text = "kullanıcı adı"
+
+[node name="LobbyButton" type="Button" parent="button_manager" unique_id=631599400]
+layout_mode = 0
+offset_left = 140.0
+offset_top = 75.0
+offset_right = 232.0
+offset_bottom = 106.0
+text = "Lobiye Geç"
+
+[connection signal="pressed" from="button_manager/VBoxContainer/Host" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="button_manager/VBoxContainer/Join" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="button_manager/VBoxContainer/Options" to="." method="_on_options_pressed"]
+[connection signal="pressed" from="button_manager/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="button_manager/LobbyButton" to="." method="_on_lobby_pressed"]

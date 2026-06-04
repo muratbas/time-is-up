@@ -1,79 +1,158 @@
 extends Node
 
-const PORT = 8080
-const SERVER_IP = "172.20.10.4"
+# ── Sabitler ──────────────────────────────────────────────────────────────────
+const PORT: int = 8080
 
-var player_scene = preload("res://Assets/Scenes/Char/player.tscn")
+# ── Sinyaller ─────────────────────────────────────────────────────────────────
+## Waiting area'nın oyuncu listesini yenilemesi için
+signal player_list_changed
 
-var _players_spawn_node
+# ── Durum ─────────────────────────────────────────────────────────────────────
+var is_host: bool = false
 
-var is_host = false
+## peer_id → nickname eşlemesi; tüm peerlarda senkronize tutulur
+var connected_players: Dictionary = {}
+
+var _player_scene = preload("res://Assets/Scenes/Char/player.tscn")
+var _players_spawn_node: Node = null
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Kurulum
+# ══════════════════════════════════════════════════════════════════════════════
 
 func setup_multiplayer() -> void:
 	if is_host:
-		become_host()
+		_become_host()
 	else:
-		join_game()
+		_join_game()
 
-func become_host():
-	print("host oldum")
-	
-	_players_spawn_node = get_tree().current_scene.get_node("Players")
 
-	var server_peer = ENetMultiplayerPeer.new()
+func _become_host() -> void:
+	print("Host olunuyor, IP: %s" % PlayerData.server_ip)
+
+	var server_peer := ENetMultiplayerPeer.new()
 	server_peer.create_server(PORT)
-	
 	multiplayer.multiplayer_peer = server_peer
 
-	multiplayer.peer_connected.connect(_add_player_to_game)
-	multiplayer.peer_disconnected.connect(_remove_player)
+	multiplayer.peer_connected.connect(_on_peer_connected)
+	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 
-	_remove_single_player()
+	# Host'un kendisini listeye ekle
+	_register_player(1, PlayerData.nickname)
 
-	_add_player_to_game(1)
 
+func _join_game() -> void:
+	print("Bağlanılıyor: %s" % PlayerData.server_ip)
 
-func join_game():
-	print("oyuna katıldım")
-
-	var client_peer = ENetMultiplayerPeer.new()
-	client_peer.create_client(SERVER_IP, PORT)
-
-	_players_spawn_node = get_tree().current_scene.get_node("Players")
-
+	var client_peer := ENetMultiplayerPeer.new()
+	client_peer.create_client(PlayerData.server_ip, PORT)
 	multiplayer.multiplayer_peer = client_peer
 
-	_remove_single_player()
+	# Client bağlandığında nick'ini server'a gönder
+	multiplayer.connected_to_server.connect(_on_connected_to_server)
 
 
-func _add_player_to_game(id: int) -> void:
-	print("oyuncu %s katıldı" % id)
+# ══════════════════════════════════════════════════════════════════════════════
+# Bağlantı Olayları
+# ══════════════════════════════════════════════════════════════════════════════
 
-	var player_to_add: Node2D = player_scene.instantiate()
-	player_to_add.player_id = id
-	player_to_add.name = str(id)
-	_players_spawn_node.add_child(player_to_add, true)
+func _on_peer_connected(id: int) -> void:
+	print("Peer bağlandı: %s" % id)
+	# Yeni gelen peer'a mevcut listeyi gönder
+	_rpc_sync_player_list.rpc_id(id, connected_players)
 
-	# GameManager'a yeni oyuncu katıldığını bildir
+
+func _on_peer_disconnected(id: int) -> void:
+	print("Peer ayrıldı: %s" % id)
+	connected_players.erase(id)
+	_rpc_player_left.rpc(id)
+
+
+func _on_connected_to_server() -> void:
+	# Client server'a bağlandığında kendi nick'ini kaydettir
+	_rpc_register_me.rpc_id(1, multiplayer.get_unique_id(), PlayerData.nickname)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Yardımcılar
+# ══════════════════════════════════════════════════════════════════════════════
+
+func _register_player(id: int, nick: String) -> void:
+	connected_players[id] = nick
+	player_list_changed.emit()
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# RPC'ler
+# ══════════════════════════════════════════════════════════════════════════════
+
+## Client → Server: "Benim nick'im bu"
+@rpc("any_peer", "reliable")
+func _rpc_register_me(id: int, nick: String) -> void:
+	if not multiplayer.is_server():
+		return
+	_register_player(id, nick)
+	# Yeni oyuncuyu herkese duyur
+	_rpc_player_joined.rpc(id, nick)
+
+
+## Server → Herkes: "Bu oyuncu katıldı"
+@rpc("authority", "call_local", "reliable")
+func _rpc_player_joined(id: int, nick: String) -> void:
+	connected_players[id] = nick
+	player_list_changed.emit()
+
+
+## Server → Herkes: "Bu oyuncu ayrıldı"
+@rpc("authority", "call_local", "reliable")
+func _rpc_player_left(id: int) -> void:
+	connected_players.erase(id)
+	player_list_changed.emit()
+
+
+## Server → YeniClient: Mevcut oyuncu listesini gönder
+@rpc("authority", "reliable")
+func _rpc_sync_player_list(player_dict: Dictionary) -> void:
+	connected_players = player_dict
+	player_list_changed.emit()
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Oyun Sahnesi — Oyuncu Spawn / Despawn
+# ══════════════════════════════════════════════════════════════════════════════
+
+func spawn_players_in_game(spawn_node: Node) -> void:
+	_players_spawn_node = spawn_node
+	# Önceki tek-oyunculu Player node'unu temizle
+	var solo := get_tree().current_scene.get_node_or_null("Player")
+	if solo:
+		solo.queue_free()
+
+	if multiplayer.is_server():
+		for id: int in connected_players.keys():
+			_spawn_player(id)
+
+	multiplayer.peer_connected.connect(_spawn_player)
+	multiplayer.peer_disconnected.connect(_despawn_player)
+
+
+func _spawn_player(id: int) -> void:
+	var player: Node2D = _player_scene.instantiate()
+	player.player_id = id
+	player.name = str(id)
+	_players_spawn_node.add_child(player, true)
+
 	var gm: Node = get_tree().get_first_node_in_group("game_manager")
 	if gm:
 		gm.on_player_joined()
 
 
-func _remove_player(id: int) -> void:
-	print("oyuncu %s ayrıldı" % id)
+func _despawn_player(id: int) -> void:
 	if not _players_spawn_node.has_node(str(id)):
 		return
 	_players_spawn_node.get_node(str(id)).queue_free()
 
-	# GameManager'a oyuncu ayrıldığını bildir
 	var gm: Node = get_tree().get_first_node_in_group("game_manager")
 	if gm:
 		gm.on_player_left()
-
-
-func _remove_single_player():
-	print("Remove single player")
-	var player_to_remove = get_tree().current_scene.get_node_or_null("Player")
-	if player_to_remove:
-		player_to_remove.queue_free()

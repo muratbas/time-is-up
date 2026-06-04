@@ -835,12 +835,14 @@ theme_override_fonts/font = ExtResource("4_nq0pn")
 theme_override_styles/normal = SubResource("StyleBoxFlat_7tyjs")
 text = "Oyun Kur"
 flat = true
+script = ExtResource("2_fxcrr")
 
 [node name="JoinGame" type="Button" parent="menubuttons" unique_id=1662023884]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_nq0pn")
 text = "Bağlan"
 flat = true
+script = ExtResource("2_fxcrr")
 
 [node name="Quit" type="Button" parent="menubuttons" unique_id=848115044]
 layout_mode = 2
@@ -851,16 +853,43 @@ flat = true
 
 [node name="UsernameInput" type="LineEdit" parent="." unique_id=494610568]
 layout_mode = 0
-offset_left = 244.0
-offset_top = 203.0
-offset_right = 404.0
-offset_bottom = 234.0
+offset_left = 248.0
+offset_top = 233.0
+offset_right = 408.0
+offset_bottom = 264.0
 placeholder_text = "Kullanıcı Adın.."
+
+[node name="IpInput" type="LineEdit" parent="." unique_id=2141261029]
+layout_mode = 0
+offset_left = 246.0
+offset_top = 270.0
+offset_right = 409.0
+offset_bottom = 301.0
+placeholder_text = "Sunucu IP adresi..."
+
+[node name="IpDisplayLabel" type="Label" parent="." unique_id=1650163082]
+layout_mode = 0
+offset_left = 260.0
+offset_top = 202.0
+offset_right = 390.0
+offset_bottom = 225.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+
+[node name="IpErrorLabel" type="Label" parent="." unique_id=1533413559]
+layout_mode = 0
+offset_left = 258.0
+offset_top = 310.0
+offset_right = 424.0
+offset_bottom = 342.0
+theme_override_colors/font_color = Color(1, 0, 0, 1)
 
 [node name="menuMusic" type="AudioStreamPlayer" parent="." unique_id=836007143]
 stream = ExtResource("5_nq0pn")
 parameters/looping = false
 
+[connection signal="pressed" from="menubuttons/HostGame" to="." method="_on_host_game_pressed"]
 [connection signal="pressed" from="menubuttons/HostGame" to="GameHandler" method="become_host"]
+[connection signal="pressed" from="menubuttons/JoinGame" to="." method="_on_join_game_pressed"]
 [connection signal="pressed" from="menubuttons/JoinGame" to="GameHandler" method="join_game"]
 [connection signal="pressed" from="menubuttons/Quit" to="." method="_on_quit_pressed"]

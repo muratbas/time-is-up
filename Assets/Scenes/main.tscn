@@ -15,12 +15,12 @@ script = ExtResource("1_guoxd")
 [node name="GameManager" type="Node" parent="." unique_id=102626354]
 script = ExtResource("3_rvsrt")
 
-[node name="Map" parent="." unique_id=1530014150 instance=ExtResource("2_elf4b")]
-
 [node name="menuMusic" type="AudioStreamPlayer" parent="." unique_id=560640561]
 stream = ExtResource("4_guoxd")
 bus = &"Music"
 parameters/looping = false
+
+[node name="Map" parent="." unique_id=1530014150 instance=ExtResource("2_elf4b")]
 
 [node name="Players" type="Node2D" parent="." unique_id=377707230]
 
