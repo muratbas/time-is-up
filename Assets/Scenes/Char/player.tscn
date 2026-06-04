@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://d4a7oy4up4d20" path="res://Assets/Scripts/player.gd" id="1_ibqoo"]
 [ext_resource type="Script" uid="uid://djbbokt1i8xdq" path="res://Assets/Scripts/Multiplayer/multiplayer_input.gd" id="2_da8pg"]
 [ext_resource type="Texture2D" uid="uid://3exc0eip7ggt" path="res://Assets/Sprites/char/karakterspritesheet.png" id="2_ibqoo"]
-[ext_resource type="FontFile" uid="uid://gogqic76ay" path="res://Assets/Fonts/KiwiSoda.ttf" id="3_6tr60"]
 [ext_resource type="Texture2D" uid="uid://bw0yvi70670la" path="res://Assets/Sprites/items/tntsprite.png" id="3_71wdy"]
 [ext_resource type="Texture2D" uid="uid://36oocgfqykg2" path="res://Assets/Sprites/char/explodereal.png" id="3_hvx5h"]
 [ext_resource type="Texture2D" uid="uid://c7cynlxvhktht" path="res://Assets/Sprites/char/time_is_up_player_base (3).png" id="3_uiccu"]
@@ -479,7 +478,6 @@ offset_bottom = -15.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 1
-theme_override_fonts/font = ExtResource("3_6tr60")
 theme_override_font_sizes/font_size = 10
 theme_override_styles/normal = SubResource("StyleBoxEmpty_hvx5h")
 horizontal_alignment = 1

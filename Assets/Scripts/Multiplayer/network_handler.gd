@@ -63,6 +63,11 @@ func _join_game() -> void:
 
 	# Client bağlandığında nick'ini server'a gönder
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
+	
+	# Eğer server (host) aniden kapanırsa client oyunda donup kalmasın diye:
+	multiplayer.server_disconnected.connect(_on_server_disconnected)
+
+
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -84,6 +89,19 @@ func _on_peer_disconnected(id: int) -> void:
 func _on_connected_to_server() -> void:
 	# Client server'a bağlandığında kendi nick'ini kaydettir
 	_rpc_register_me.rpc_id(1, multiplayer.get_unique_id(), PlayerData.nickname)
+
+
+func _on_server_disconnected() -> void:
+	print("Sunucu bağlantısı koptu (Host çıktı). Ana menüye dönülüyor.")
+	# Oyun içindeysen GameManager üzerinden temiz bir çıkış yap
+	var gm: Node = get_tree().get_first_node_in_group("game_manager")
+	if gm and gm.has_method("return_to_menu"):
+		gm.return_to_menu()
+	else:
+		reset()
+		get_tree().change_scene_to_file("res://Assets/Scenes/Menu/main_menu2.tscn")
+
+
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -194,5 +212,6 @@ func _despawn_player(id: int) -> void:
 	if _notify_game_manager:
 		var gm: Node = get_tree().get_first_node_in_group("game_manager")
 		if gm:
-			gm.on_player_left()
+			gm.on_player_left(id)
+
 

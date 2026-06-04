@@ -100,7 +100,15 @@ func _ready() -> void:
 
 
 	double_jump_effect.visible = false
-	tnt_marker.visible = false
+	
+	# Eğer oyuncu oyuna sonradan spawn olmuşsa ve zaten ebeyse (GameManager'da ebe olarak görünüyorsa)
+	# bombayı hemen görsel olarak eline almalı. Aksi takdirde oyun başlar ama ebede bomba görünmez.
+	var gm: Node = get_tree().get_first_node_in_group("game_manager")
+	if gm and gm.current_tag_id == player_id:
+		become_tag()
+	else:
+		tnt_marker.visible = false
+
 	punch_hitbox.monitoring = false
 
 	double_jump_effect.animation_finished.connect(_on_double_jump_animation_finished)

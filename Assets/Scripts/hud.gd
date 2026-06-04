@@ -11,6 +11,8 @@ var tag_label: Label
 var max_time_label: Label
 var game_over_panel: Control
 var result_label: Label
+var ping_label: Label
+
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -27,6 +29,8 @@ func _ready() -> void:
 	max_time_label  = find_child("MaxTimeLabel", true, false) as Label
 	game_over_panel = find_child("GameOverPanel", true, false) as Control
 	result_label    = find_child("ResultLabel", true, false) as Label
+	ping_label      = find_child("PingLabel", true, false) as Label
+
 
 	await get_tree().process_frame
 	_game_manager = get_tree().get_first_node_in_group("game_manager")
@@ -60,8 +64,21 @@ func _ready() -> void:
 # ══════════════════════════════════════════════════════════════════════════════
 
 func _process(_delta: float) -> void:
+	# Ping gösterimi (Her 30 karede bir güncellenir ki yormasın)
+	if ping_label and Engine.get_frames_drawn() % 30 == 0:
+		var enet_peer = multiplayer.multiplayer_peer as ENetMultiplayerPeer
+		if enet_peer:
+			if multiplayer.is_server():
+				ping_label.text = "Ping: 0 ms (Host)"
+			else:
+				var server_peer = enet_peer.get_peer(1)
+				if server_peer:
+					var ping = server_peer.get_statistic(ENetPacketPeer.PEER_ROUND_TRIP_TIME)
+					ping_label.text = "Ping: %d ms" % ping
+
 	if _game_manager == null:
 		return
+
 	if _game_manager.game_state != _game_manager.GameState.PLAYING:
 		return
 	# Bomba sayacını her frame güncelle; tüm peerlarda aynı değer (set_process=true)

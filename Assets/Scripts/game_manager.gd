@@ -60,13 +60,29 @@ func on_player_joined() -> void:
 		_start_game()
 
 
-func on_player_left() -> void:
+func on_player_left(id: int) -> void:
 	if not multiplayer.is_server():
 		return
 	var count: int = _get_player_count()
 	_rpc_player_count_changed.rpc(count)
-	if game_state == GameState.PLAYING and count < MIN_PLAYERS:
+	
+	if game_state == GameState.PLAYING:
+		if alive_players.has(id):
+			alive_players.erase(id)
+			
+			if alive_players.size() <= 1:
+				var winner_id: int = alive_players[0] if alive_players.size() > 0 else -1
+				_rpc_game_ended.rpc(winner_id)
+				return
+				
+			if current_tag_id == id:
+				# Ebe oyundan çıktıysa yeni bir ebe seç ve süreyi başa sar
+				transfer_count = 0
+				current_bomb_time = TIME_STEPS[0]
+				_assign_random_tag()
+	elif game_state == GameState.WAITING and count < MIN_PLAYERS:
 		_abort_game()
+
 
 
 func _get_player_count() -> int:

@@ -59,6 +59,16 @@ offset_top = 63.0
 offset_right = 217.0
 offset_bottom = 86.0
 
+[node name="PingLabel" type="Label" parent="HUD/HUDPanel" unique_id=1200391519]
+layout_mode = 0
+offset_left = -173.0
+offset_top = -17.0
+offset_right = -119.0
+offset_bottom = 18.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 17
+
 [node name="GameOverPanel" type="Control" parent="HUD" unique_id=1158481425]
 layout_mode = 3
 anchors_preset = 0
