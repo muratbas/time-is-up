@@ -33,6 +33,9 @@ func _process(_delta: float) -> void:
 		_send_jump_cut.rpc()
 	if Input.is_action_just_pressed("Punch"):
 		_send_punch.rpc()
+	if Input.is_action_just_pressed("Special"):
+		_send_dash.rpc()
+
 
 
 # ── RPC Fonksiyonları ─────────────────────────────────────────────────────────
@@ -61,5 +64,12 @@ func _send_jump_cut() -> void:
 
 @rpc("authority", "call_local", "reliable")
 func _send_punch() -> void:
-	if player.state != player.State.PUNCHING:
+	if player.state != player.State.PUNCHING and player.state != player.State.DASHING:
 		player._perform_punch()
+
+
+@rpc("authority", "call_local", "reliable")
+func _send_dash() -> void:
+	if player.dash_cooldown_timer <= 0.0 and player.state != player.State.DASHING and player.state != player.State.PUNCHING:
+		player._perform_dash()
+

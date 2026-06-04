@@ -9,6 +9,8 @@ extends CharacterBody2D
 @onready var tnt_sprite: AnimatedSprite2D = $Marker2D/AnimatedSprite2D
 @onready var input_sync: MultiplayerSynchronizer = %InputSynchronizer
 @onready var nickname_label: Label = $NicknameLabel
+@onready var camera: Camera2D = $Camera2D
+
 
 @export var player_id := 1:
 	set(id):
@@ -33,7 +35,11 @@ const MAX_JUMPS: int = 1
 const PUNCH_FORCE: float = 380.0
 const PUNCH_VERTICAL: float = -120.0
 const STUN_DURATION: float = 0.3
+const DASH_SPEED: float = 650.0
+const DASH_DURATION: float = 0.2
+const DASH_COOLDOWN: float = 1.0
 const PLAYER_COLORS: Array[Color] = [
+
 	Color("#FF2D00"), # Kırmızı
 	Color("#0055FF"), # Mavi
 	Color("#00FF2A"), # Yeşil
@@ -60,7 +66,9 @@ enum State {
 	PUNCHING,
 	STUNNED,
 	ELIMINATED,
+	DASHING,
 }
+
 
 var state: State = State.IDLE
 
@@ -69,9 +77,14 @@ var jumps_remaining: int = MAX_JUMPS
 var is_tag: bool = false
 var is_eliminated: bool = false
 var stun_timer: float = 0.0
+var dash_timer: float = 0.0
+var dash_cooldown_timer: float = 0.0
+var dash_ghost_timer: float = 0.0
+var dash_direction: float = 1.0
 
 # ── Debug ────────────────────────────────────────────────────────────────────
-@export var is_dummy: bool = false # Sadece test için; ikinci oyuncuyu pasif yapar
+
+@export var is_dummy: bool = false # Sadece test için; ikinci oyuncuyu pasif bırakır
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -99,7 +112,11 @@ func _ready() -> void:
 	animated_sprite.modulate = PLAYER_COLORS[color_index % PLAYER_COLORS.size()]
 
 
+	animated_sprite.modulate = PLAYER_COLORS[color_index % PLAYER_COLORS.size()]
+
 	double_jump_effect.visible = false
+
+
 	
 	# Eğer oyuncu oyuna sonradan spawn olmuşsa ve zaten ebeyse (GameManager'da ebe olarak görünüyorsa)
 	# bombayı hemen görsel olarak eline almalı. Aksi takdirde oyun başlar ama ebede bomba görünmez.
@@ -110,9 +127,16 @@ func _ready() -> void:
 		tnt_marker.visible = false
 
 	punch_hitbox.monitoring = false
+	
+	# Kamerayı biraz geriye çekerek görüş alanını genişlet
+	# Godot 4'te 1.0'dan küçük değerler (ör: 0.7) uzaklaştırır, daha fazla yer gösterir
+	camera.zoom = Vector2(0.7, 0.7)
 
 	double_jump_effect.animation_finished.connect(_on_double_jump_animation_finished)
+
 	animated_sprite.animation_finished.connect(_on_player_animation_finished)
+
+
 	punch_hitbox.body_entered.connect(_on_punch_hitbox_body_entered)
 
 
@@ -134,8 +158,14 @@ func _physics_process(delta: float) -> void:
 
 	var was_on_floor: bool = is_on_floor()
 
-	_apply_gravity(delta)
+	if dash_cooldown_timer > 0.0:
+		dash_cooldown_timer -= delta
+
+	if state != State.DASHING:
+		_apply_gravity(delta)
+		
 	_process_state(delta)
+
 	move_and_slide()
 	_post_move(was_on_floor)
 	_update_animation()
@@ -163,10 +193,12 @@ func _process_state(delta: float) -> void:
 		State.ELIMINATED:
 			# Eğer kazara ELIMINATED state'ine geçilirse IDLE'a dön, hareket edebilsin
 			_transition(State.IDLE)
-
+		State.DASHING:
+			_state_dashing(delta)
 
 
 func _transition(new_state: State) -> void:
+
 	state = new_state
 
 
@@ -245,7 +277,26 @@ func _state_stunned(delta: float) -> void:
 			_transition(State.FALLING)
 
 
+func _state_dashing(delta: float) -> void:
+	velocity.x = dash_direction * DASH_SPEED
+	velocity.y = 0.0 # Havada süzülür gibi atılsın
+	dash_timer -= delta
+	
+	# Ghost trail efekti her 0.04 saniyede bir
+	dash_ghost_timer -= delta
+	if dash_ghost_timer <= 0.0:
+		dash_ghost_timer = 0.04
+		_create_ghost_trail()
+
+	if dash_timer <= 0.0:
+		if is_on_floor():
+			_transition(State.RUNNING if input_sync.input_direction != 0.0 else State.IDLE)
+		else:
+			_transition(State.FALLING)
+
+
 # ══════════════════════════════════════════════════════════════════════════════
+
 # Ortak Eylemler (Birden fazla state'te kullanılır)
 # ══════════════════════════════════════════════════════════════════════════════
 
@@ -318,10 +369,11 @@ func _update_animation() -> void:
 
 func _update_sprite_direction() -> void:
 	# Yumruk animasyonu ortasında sprite'ın dönmesi görsel bozulma yaratır
-	if state == State.PUNCHING:
+	if state == State.PUNCHING or state == State.DASHING:
 		return
 
 	if velocity.x > 0.0:
+
 		animated_sprite.flip_h = false
 	elif velocity.x < 0.0:
 		animated_sprite.flip_h = true
@@ -342,7 +394,55 @@ func _perform_punch() -> void:
 	punch_hitbox.scale.x = -1.0 if animated_sprite.flip_h else 1.0
 
 
+func _perform_dash() -> void:
+	if is_eliminated:
+		return
+	_transition(State.DASHING)
+	dash_timer = DASH_DURATION
+	dash_cooldown_timer = DASH_COOLDOWN
+	dash_ghost_timer = 0.0
+	
+	# Yön yoksa en son baktığı yöne atılsın
+	var input_dir: float = input_sync.input_direction
+	if input_dir != 0.0:
+		dash_direction = input_dir
+	else:
+		dash_direction = -1.0 if animated_sprite.flip_h else 1.0
+		
+	animated_sprite.play("tagdash" if is_tag else "dash")
+
+
+func _create_ghost_trail() -> void:
+	var ghost := Sprite2D.new()
+	# AnimatedSprite2D'nin o anki karesini texture olarak al
+	var tex = animated_sprite.sprite_frames.get_frame_texture(animated_sprite.animation, animated_sprite.frame)
+	ghost.texture = tex
+	ghost.global_position = animated_sprite.global_position
+	ghost.scale = animated_sprite.scale
+	ghost.flip_h = animated_sprite.flip_h
+	ghost.modulate = animated_sprite.modulate
+	ghost.modulate.a = 0.8 # Görünürlüğü biraz daha artırdık
+	ghost.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	ghost.z_index = animated_sprite.z_index
+	
+	# MultiplayerSpawner sorunlarını engellemek için direkt ana sahneye ekle
+	var root = get_tree().current_scene
+	if root:
+		root.add_child(ghost)
+	else:
+		get_parent().add_child(ghost)
+
+	
+	# Yavaşça kaybolmasını sağla (Tween ile)
+	var tween = create_tween()
+	tween.tween_property(ghost, "modulate:a", 0.0, 0.4)
+	tween.tween_callback(ghost.queue_free)
+
+
+
 func receive_knockback(force: Vector2) -> void:
+
+
 	if is_eliminated:
 		return
 	velocity = force

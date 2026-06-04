@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://3exc0eip7ggt" path="res://Assets/Sprites/char/karakterspritesheet.png" id="2_ibqoo"]
 [ext_resource type="Texture2D" uid="uid://bw0yvi70670la" path="res://Assets/Sprites/items/tntsprite.png" id="3_71wdy"]
 [ext_resource type="Texture2D" uid="uid://36oocgfqykg2" path="res://Assets/Sprites/char/explodereal.png" id="3_hvx5h"]
+[ext_resource type="Texture2D" uid="uid://e1xfqbldvrhq" path="res://Assets/Sprites/char/tagdash_dasheffect.png" id="3_r8xr6"]
 [ext_resource type="Texture2D" uid="uid://c7cynlxvhktht" path="res://Assets/Sprites/char/time_is_up_player_base (3).png" id="3_uiccu"]
 [ext_resource type="Texture2D" uid="uid://gwis1dakpuql" path="res://Assets/Sprites/char/double_jump_effect.png" id="4_ncuj1"]
 [ext_resource type="Texture2D" uid="uid://vbv34drk2qr2" path="res://Assets/Sprites/char/spritesheet.png" id="5_da8pg"]
@@ -18,6 +19,14 @@ properties/1/spawn = true
 properties/1/replication_mode = 1
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_6tr60"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jb8py"]
+atlas = ExtResource("3_r8xr6")
+region = Rect2(0, 320, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e7o4g"]
+atlas = ExtResource("3_r8xr6")
+region = Rect2(32, 320, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_idtj1"]
 atlas = ExtResource("3_hvx5h")
@@ -123,6 +132,10 @@ region = Rect2(128, 32, 32, 32)
 atlas = ExtResource("2_ibqoo")
 region = Rect2(160, 32, 32, 32)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_0mwy1"]
+atlas = ExtResource("3_r8xr6")
+region = Rect2(0, 352, 32, 32)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_3o1qu"]
 atlas = ExtResource("2_ibqoo")
 region = Rect2(0, 128, 32, 32)
@@ -181,6 +194,17 @@ region = Rect2(160, 160, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_mlk2r"]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jb8py")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e7o4g")
+}],
+"loop": false,
+"name": &"dash",
+"speed": 10.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_idtj1")
@@ -293,6 +317,14 @@ animations = [{
 "loop": true,
 "name": &"run",
 "speed": 20.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0mwy1")
+}],
+"loop": true,
+"name": &"tagdash",
+"speed": 5.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -440,10 +472,9 @@ script = ExtResource("2_da8pg")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=865814971]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_mlk2r")
-animation = &"explode"
+animation = &"tagdash"
 autoplay = "idle"
-frame = 5
-frame_progress = 1.0
+frame_progress = 0.37949422
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1423131883]
 position = Vector2(0, 1)
@@ -460,7 +491,7 @@ position = Vector2(0, -21)
 scale = Vector2(0.828125, 0.8675595)
 sprite_frames = SubResource("SpriteFrames_wvor5")
 animation = &"TNT"
-frame_progress = 0.37125695
+frame_progress = 0.28652886
 
 [node name="DoubleJumpEffect" type="AnimatedSprite2D" parent="." unique_id=1390648661]
 visible = false
