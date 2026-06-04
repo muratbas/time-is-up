@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://3exc0eip7ggt" path="res://Assets/Sprites/char/karakterspritesheet.png" id="2_ibqoo"]
 [ext_resource type="FontFile" uid="uid://gogqic76ay" path="res://Assets/Fonts/KiwiSoda.ttf" id="3_6tr60"]
 [ext_resource type="Texture2D" uid="uid://bw0yvi70670la" path="res://Assets/Sprites/items/tntsprite.png" id="3_71wdy"]
+[ext_resource type="Texture2D" uid="uid://36oocgfqykg2" path="res://Assets/Sprites/char/explodereal.png" id="3_hvx5h"]
 [ext_resource type="Texture2D" uid="uid://c7cynlxvhktht" path="res://Assets/Sprites/char/time_is_up_player_base (3).png" id="3_uiccu"]
 [ext_resource type="Texture2D" uid="uid://gwis1dakpuql" path="res://Assets/Sprites/char/double_jump_effect.png" id="4_ncuj1"]
 [ext_resource type="Texture2D" uid="uid://vbv34drk2qr2" path="res://Assets/Sprites/char/spritesheet.png" id="5_da8pg"]
@@ -18,6 +19,30 @@ properties/1/spawn = true
 properties/1/replication_mode = 1
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_6tr60"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idtj1"]
+atlas = ExtResource("3_hvx5h")
+region = Rect2(0, 288, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_veljh"]
+atlas = ExtResource("3_hvx5h")
+region = Rect2(32, 288, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_beedt"]
+atlas = ExtResource("3_hvx5h")
+region = Rect2(64, 288, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_krlue"]
+atlas = ExtResource("3_hvx5h")
+region = Rect2(96, 288, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sfbb6"]
+atlas = ExtResource("3_hvx5h")
+region = Rect2(128, 288, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x4pfp"]
+atlas = ExtResource("3_hvx5h")
+region = Rect2(160, 288, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_y88jl"]
 atlas = ExtResource("3_uiccu")
@@ -157,6 +182,29 @@ region = Rect2(160, 160, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_mlk2r"]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idtj1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_veljh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_beedt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_krlue")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sfbb6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x4pfp")
+}],
+"loop": false,
+"name": &"explode",
+"speed": 11.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_y88jl")
@@ -393,8 +441,10 @@ script = ExtResource("2_da8pg")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=865814971]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_mlk2r")
-animation = &"run"
+animation = &"explode"
 autoplay = "idle"
+frame = 5
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1423131883]
 position = Vector2(0, 1)

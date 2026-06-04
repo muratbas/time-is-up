@@ -12,6 +12,11 @@ func _ready() -> void:
 	# NetworkHandler'ın oyuncu sinyal güncellemelerine bağlan
 	NetworkHandler.player_list_changed.connect(_refresh_player_list)
 
+	# Oyuncuları lobide spawn et (game_manager bilgilendirilmez)
+	var players_node: Node = _find_node("Players")
+	if players_node:
+		NetworkHandler.spawn_players_in_lobby(players_node)
+
 	# Başlangıçta listeyi ve durumu çiz
 	_refresh_player_list()
 

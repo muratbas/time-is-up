@@ -1,16 +1,15 @@
 [gd_scene format=3 uid="uid://88ips82anuhv"]
 
-[ext_resource type="Script" uid="uid://xkrdd3jahxma" path="res://Assets/Scripts/game_handler.gd" id="1_guoxd"]
 [ext_resource type="Script" uid="uid://6s8ke2ffe34a" path="res://Assets/Scripts/main.gd" id="1_rvsrt"]
 [ext_resource type="PackedScene" uid="uid://k14y6g315785" path="res://Assets/Scenes/Levels/map.tscn" id="2_elf4b"]
 [ext_resource type="Script" uid="uid://825laqg6vakq" path="res://Assets/Scripts/game_manager.gd" id="3_rvsrt"]
 [ext_resource type="AudioStream" uid="uid://b7lnv2ooti6nr" path="res://Assets/SFX/mainmenu.mp3" id="4_guoxd"]
+[ext_resource type="Script" uid="uid://c78ftrykhub7f" path="res://Assets/Scripts/hud.gd" id="6_acsc0"]
+[ext_resource type="PackedScene" uid="uid://dljfmj3annytv" path="res://Assets/Scenes/Menu/pause_menu.tscn" id="6_nacht"]
+[ext_resource type="FontFile" uid="uid://gogqic76ay" path="res://Assets/Fonts/KiwiSoda.ttf" id="7_acsc0"]
 
 [node name="Main" type="Node2D" unique_id=847079045]
 script = ExtResource("1_rvsrt")
-
-[node name="GameHandler" type="Node" parent="." unique_id=2018636484]
-script = ExtResource("1_guoxd")
 
 [node name="GameManager" type="Node" parent="." unique_id=102626354]
 script = ExtResource("3_rvsrt")
@@ -28,3 +27,55 @@ parameters/looping = false
 _spawnable_scenes = PackedStringArray("uid://8s325ht8ke3a")
 spawn_path = NodePath("../Players")
 spawn_limit = 5
+
+[node name="PauseMenu" parent="." unique_id=1601005604 instance=ExtResource("6_nacht")]
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=481810355]
+script = ExtResource("6_acsc0")
+
+[node name="HUDPanel" type="Control" parent="HUD" unique_id=351911193]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 182.0
+offset_top = 24.0
+offset_right = 222.0
+offset_bottom = 64.0
+
+[node name="TimerLabel" type="Label" parent="HUD/HUDPanel" unique_id=1765359472]
+layout_mode = 0
+offset_left = 298.0
+offset_top = 5.0
+offset_right = 402.0
+offset_bottom = 46.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("7_acsc0")
+theme_override_font_sizes/font_size = 16
+
+[node name="TagLabel" type="Label" parent="HUD/HUDPanel" unique_id=322752634]
+layout_mode = 0
+offset_left = 177.0
+offset_top = 63.0
+offset_right = 217.0
+offset_bottom = 86.0
+
+[node name="GameOverPanel" type="Control" parent="HUD" unique_id=1158481425]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBox" type="VBoxContainer" parent="HUD/GameOverPanel" unique_id=130920563]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ResultLabel" type="Label" parent="HUD/GameOverPanel/VBox" unique_id=972923353]
+layout_mode = 2
+
+[node name="MenuButton" type="Button" parent="HUD/GameOverPanel/VBox" unique_id=1286838636]
+visible = false
+layout_mode = 2
+text = "Ana Menü"
+
+[connection signal="pressed" from="HUD/GameOverPanel/VBox/MenuButton" to="." method="_on_menu_button_pressed"]

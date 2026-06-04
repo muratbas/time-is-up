@@ -15,6 +15,18 @@ var connected_players: Dictionary = {}
 
 var _player_scene = preload("res://Assets/Scenes/Char/player.tscn")
 var _players_spawn_node: Node = null
+var _notify_game_manager: bool = false
+
+
+
+func reset() -> void:
+	# Menüye dönünce tüm ağ durumu sıfırlanır
+	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
+	connected_players.clear()
+	_players_spawn_node = null
+	is_host = false
+	PlayerData.server_ip = ""
+
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -119,40 +131,68 @@ func _rpc_sync_player_list(player_dict: Dictionary) -> void:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Oyun Sahnesi — Oyuncu Spawn / Despawn
+# Oyuncu Spawn / Despawn
 # ══════════════════════════════════════════════════════════════════════════════
 
+## GameManager'ı bilgilendirmeden (lobi için) oyuncuları spawn et
+func spawn_players_in_lobby(spawn_node: Node) -> void:
+	_do_spawn(spawn_node, false)
+
+
+## GameManager'ı bilgilendirerek (oyun sahnesi için) oyuncuları spawn et
 func spawn_players_in_game(spawn_node: Node) -> void:
-	_players_spawn_node = spawn_node
 	# Önceki tek-oyunculu Player node'unu temizle
 	var solo := get_tree().current_scene.get_node_or_null("Player")
 	if solo:
 		solo.queue_free()
+	_do_spawn(spawn_node, true)
 
+
+func _do_spawn(spawn_node: Node, notify_game_manager: bool) -> void:
+	_players_spawn_node = spawn_node
+	_notify_game_manager = notify_game_manager
+
+	# Çift sinyal bağlantısını önle
+	if not multiplayer.peer_connected.is_connected(_spawn_player):
+		multiplayer.peer_connected.connect(_spawn_player)
+	if not multiplayer.peer_disconnected.is_connected(_despawn_player):
+		multiplayer.peer_disconnected.connect(_despawn_player)
+
+	# Mevcut bağlı oyuncuları spawn et (sadece server; Spawner clientlara yayar)
 	if multiplayer.is_server():
 		for id: int in connected_players.keys():
 			_spawn_player(id)
 
-	multiplayer.peer_connected.connect(_spawn_player)
-	multiplayer.peer_disconnected.connect(_despawn_player)
-
 
 func _spawn_player(id: int) -> void:
+	# Spawner kullanıldığı için sadece server manuel spawn yapar; clientlara otomatik yayılır
+	if not multiplayer.is_server():
+		return
+	if not is_instance_valid(_players_spawn_node):
+		return
 	var player: Node2D = _player_scene.instantiate()
 	player.player_id = id
 	player.name = str(id)
 	_players_spawn_node.add_child(player, true)
 
-	var gm: Node = get_tree().get_first_node_in_group("game_manager")
-	if gm:
-		gm.on_player_joined()
+	if _notify_game_manager:
+		var gm: Node = get_tree().get_first_node_in_group("game_manager")
+		if gm:
+			gm.on_player_joined()
 
 
 func _despawn_player(id: int) -> void:
+	# Spawner kullanıldığı için sadece server manuel despawn yapar
+	if not multiplayer.is_server():
+		return
+	if not is_instance_valid(_players_spawn_node):
+		return
 	if not _players_spawn_node.has_node(str(id)):
 		return
 	_players_spawn_node.get_node(str(id)).queue_free()
 
-	var gm: Node = get_tree().get_first_node_in_group("game_manager")
-	if gm:
-		gm.on_player_left()
+	if _notify_game_manager:
+		var gm: Node = get_tree().get_first_node_in_group("game_manager")
+		if gm:
+			gm.on_player_left()
+

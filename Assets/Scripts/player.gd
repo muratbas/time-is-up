@@ -34,17 +34,18 @@ const PUNCH_FORCE: float = 380.0
 const PUNCH_VERTICAL: float = -120.0
 const STUN_DURATION: float = 0.3
 const PLAYER_COLORS: Array[Color] = [
-	Color("#FF6B6B"), # Mercan Kırmızı
-	Color("#4ECDC4"), # Turkuaz
-	Color("#FFE66D"), # Altın Sarı
-	Color("#A8E6CF"), # Mint Yeşil
-	Color("#FF8B94"), # Pembe
-	Color("#6C5CE7"), # Mor
-	Color("#00B4D8"), # Gök Mavisi
-	Color("#F4A261"), # Turuncu
-	Color("#B5EAD7"), # Açık Yeşil
-	Color("#FFDAC1"), # şeftali
+	Color("#FF2D00"), # Kırmızı
+	Color("#0055FF"), # Mavi
+	Color("#00FF2A"), # Yeşil
+	Color("#FFEA00"), # Sarı
+	Color("#9D00FF"), # Mor
+	Color("#FF8800"), # Turuncu
+	Color("#00FFFF"), # Camgöbeği (Cyan)
+	Color("#FF00D4"), # Pembe/Magenta
+	Color("#FFFFFF"), # Beyaz
+	Color("#8B4513")  # Kahverengi
 ]
+
 
 # ── Sinyal ───────────────────────────────────────────────────────────────────
 ## Ebelik başka oyuncuya geçtiğinde üst sistemi bilgilendirmek için
@@ -58,6 +59,7 @@ enum State {
 	FALLING,
 	PUNCHING,
 	STUNNED,
+	ELIMINATED,
 }
 
 var state: State = State.IDLE
@@ -65,6 +67,7 @@ var state: State = State.IDLE
 # ── Durum Değişkenleri ────────────────────────────────────────────────────────
 var jumps_remaining: int = MAX_JUMPS
 var is_tag: bool = false
+var is_eliminated: bool = false
 var stun_timer: float = 0.0
 
 # ── Debug ────────────────────────────────────────────────────────────────────
@@ -80,13 +83,21 @@ func _ready() -> void:
 
 	if multiplayer.get_unique_id() == player_id:
 		$Camera2D.make_current()
-		# Kendi nick'ini tüm peerlara RPC ile gönder; Synchronizer yerine tek seferlik RPC daha güvenli
-		_rpc_set_nickname.rpc(PlayerData.nickname)
 	else:
 		$Camera2D.enabled = false
 
-	# player_id deterministik olduğu için tüm peerlarda aynı renk hesaplanır
-	animated_sprite.modulate = PLAYER_COLORS[player_id % PLAYER_COLORS.size()]
+	# connected_players dict'tüm peerlarda senkron; RPC'ye gerek yok
+	var resolved_nick: String = NetworkHandler.connected_players.get(player_id, PlayerData.DEFAULT_NICKNAME)
+	nickname = resolved_nick
+
+	# Oyunculara ağa bağlanma sıralarına göre eşsiz bir renk ver
+	var keys: Array = NetworkHandler.connected_players.keys()
+	keys.sort()
+	var color_index: int = keys.find(player_id)
+	if color_index == -1: 
+		color_index = 0
+	animated_sprite.modulate = PLAYER_COLORS[color_index % PLAYER_COLORS.size()]
+
 
 	double_jump_effect.visible = false
 	tnt_marker.visible = false
@@ -97,15 +108,6 @@ func _ready() -> void:
 	punch_hitbox.body_entered.connect(_on_punch_hitbox_body_entered)
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# Nick Senkronizasyonu
-# ══════════════════════════════════════════════════════════════════════════════
-
-@rpc("any_peer", "call_local", "reliable")
-func _rpc_set_nickname(new_nickname: String) -> void:
-	# Her peer bu oyuncu node'unda nick'i günceller
-	nickname = new_nickname
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Ana Döngü
@@ -113,6 +115,7 @@ func _rpc_set_nickname(new_nickname: String) -> void:
 
 func _physics_process(delta: float) -> void:
 	# Dummy modda input alınmaz; sadece fizik çalışır
+
 	if is_dummy:
 		_apply_gravity(delta)
 		# Dummy input almaz ama knockback hızını frenlemesi gerekir
@@ -149,6 +152,10 @@ func _process_state(delta: float) -> void:
 			_state_punching()
 		State.STUNNED:
 			_state_stunned(delta)
+		State.ELIMINATED:
+			# Eğer kazara ELIMINATED state'ine geçilirse IDLE'a dön, hareket edebilsin
+			_transition(State.IDLE)
+
 
 
 func _transition(new_state: State) -> void:
@@ -281,6 +288,10 @@ func _post_move(was_on_floor: bool) -> void:
 # ══════════════════════════════════════════════════════════════════════════════
 
 func _update_animation() -> void:
+	# Eğer patlama efekti (explode) oynuyorsa bitmesini bekle, üzerine yazma
+	if animated_sprite.animation == "explode" and animated_sprite.is_playing():
+		return
+
 	match state:
 		State.IDLE:
 			animated_sprite.play("tagidle" if is_tag else "idle")
@@ -313,18 +324,23 @@ func _update_sprite_direction() -> void:
 # ══════════════════════════════════════════════════════════════════════════════
 
 func _perform_punch() -> void:
+	if is_eliminated:
+		return
 	_transition(State.PUNCHING)
-	# Ebe olduğunda görsel olarak farklı bir yumruk animasyonu oynatılır
+
 	animated_sprite.play("tagpunch" if is_tag else "punch")
 	punch_hitbox.monitoring = true
-	# Hitbox, oyuncunun baktığı yönle hizalanır
+	# Karakter nereye bakıyorsa hitbox'ı o yöne çevir
 	punch_hitbox.scale.x = -1.0 if animated_sprite.flip_h else 1.0
 
 
 func receive_knockback(force: Vector2) -> void:
+	if is_eliminated:
+		return
 	velocity = force
 	stun_timer = STUN_DURATION
 	_transition(State.STUNNED)
+
 
 
 func _apply_knockback_to(body: Node2D) -> void:
@@ -352,6 +368,25 @@ func lose_tag() -> void:
 	tnt_sprite.stop()
 
 
+func eliminate() -> void:
+	is_eliminated = true
+	_transition(State.IDLE)
+	modulate.a = 0.4 # Saydamlaş (hayalet)
+	animated_sprite.play("explode")
+
+
+	
+	# Zeminden düşmemesi için maskeyi (mask) ellemeyip sadece kendi varlığını (layer) gizliyoruz.
+	# Böylece diğer canlı oyuncular, ölü oyuncunun içinden geçip gidebilir (engellenmezler).
+	set_collision_layer_value(1, false)
+	
+	punch_hitbox.monitoring = false
+	nickname_label.text += " (ELENDİ)"
+
+
+
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 # Sinyal Callback'leri
 # ══════════════════════════════════════════════════════════════════════════════
@@ -362,26 +397,70 @@ func _on_double_jump_animation_finished() -> void:
 
 func _on_player_animation_finished() -> void:
 	var current: String = animated_sprite.animation
+	
+	# Patlama efekti bittiğinde normal hallerine dönsünler (hayalet olarak)
+	if current == "explode":
+		_transition(State.IDLE)
+		update_visibility_for_all()
+		
 	if current == "punch" or current == "tagpunch":
 		punch_hitbox.monitoring = false
 		if is_on_floor():
+
+
 			var dir: float = input_sync.input_direction
 			_transition(State.RUNNING if dir != 0.0 else State.IDLE)
 		else:
 			_transition(State.FALLING)
 
 
+func update_visibility_for_all() -> void:
+	var local_id: int = multiplayer.get_unique_id()
+	var is_local_eliminated: bool = false
+	
+	for p: Node in get_tree().get_nodes_in_group("players"):
+		if p.player_id == local_id and p.get("is_eliminated"):
+			is_local_eliminated = true
+			break
+			
+	for p: Node in get_tree().get_nodes_in_group("players"):
+		if p.get("is_eliminated"):
+			# Elenen oyuncuları sadece "kendi de elenmiş olan (izleyici)" görebilir
+			p.visible = is_local_eliminated
+		else:
+			# Hayatta olan herkes görünür
+			p.visible = true
+
+
 func _on_punch_hitbox_body_entered(body: Node2D) -> void:
+
 	# Gerçekten yumruk state'indeyken tetiklenmediyse yoksay
 	if state != State.PUNCHING:
 		return
 	if body == self:
 		return
+	if body.get("is_eliminated"):
+		return # Elenen oyunculara vurulamaz ve bomba aktarılamaz
 
 	_apply_knockback_to(body)
 
-	# Ebelik transferi yalnızca ebe olan oyuncu yumruk attığında gerçekleşir
-	if is_tag and body.has_method("become_tag"):
-		body.become_tag()
-		emit_signal("tag_transferred", self , body)
-		lose_tag()
+
+	# Bomba transferi: sadece ebe olan oyuncu, başka bir oyuncuya çarparsa
+	if not is_tag:
+		return
+	if not body.has_method("become_tag"):
+		return
+	if player_id != multiplayer.get_unique_id():
+		return
+
+	# Server'a transfer isteği gönder; GameManager doğrular ve tüm peerlara yayar
+	var gm: Node = get_tree().get_first_node_in_group("game_manager")
+	if not gm:
+		return
+	if multiplayer.is_server():
+		# Host direkt çağırır; rpc_id(1) server'dan server'a gönderemez
+		gm.request_bomb_transfer(player_id, body.player_id)
+	else:
+		gm.rpc_request_transfer.rpc_id(1, player_id, body.player_id)
+
+
