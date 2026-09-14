@@ -1,4 +1,8 @@
+class_name PauseMenu
 extends CanvasLayer
+
+# Menü açıkken karakter kontrollerini engellemek için statik bayrak
+static var is_active: bool = false
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Başlangıç
@@ -6,8 +10,12 @@ extends CanvasLayer
 
 func _ready() -> void:
 	# Başlangıçta gizli; ESC ile açılır
-	# CanvasLayer'da visible yerine hide/show kullanılır
+	is_active = false
 	hide()
+
+
+func _exit_tree() -> void:
+	is_active = false
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -21,9 +29,19 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func toggle() -> void:
 	if is_visible():
-		hide()
+		close_menu()
 	else:
-		show()
+		open_menu()
+
+
+func open_menu() -> void:
+	is_active = true
+	show()
+
+
+func close_menu() -> void:
+	is_active = false
+	hide()
 
 
 
@@ -33,7 +51,7 @@ func toggle() -> void:
 
 func _on_resume_pressed() -> void:
 	# Menüyü kapat, oyun kaldığı yerden devam eder
-	visible = false
+	close_menu()
 
 
 func _on_options_pressed() -> void:

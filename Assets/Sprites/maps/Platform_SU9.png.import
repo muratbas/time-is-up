@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://g0c8krsp5uhs"
-path="res://.godot/imported/old_growth_parallax_midground.png-86bd07784c332b9515d5db7fa79df5f5.ctex"
+uid="uid://dlv8nng07nqnh"
+path="res://.godot/imported/Platform_SU9.png-a50d8bb2e0e19c32e0dfcfbbda6f2588.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Sprites/images/Background/old_growth_parallax_midground.png"
-dest_files=["res://.godot/imported/old_growth_parallax_midground.png-86bd07784c332b9515d5db7fa79df5f5.ctex"]
+source_file="res://Assets/Sprites/maps/Platform_SU9.png"
+dest_files=["res://.godot/imported/Platform_SU9.png-a50d8bb2e0e19c32e0dfcfbbda6f2588.ctex"]
 
 [params]
 

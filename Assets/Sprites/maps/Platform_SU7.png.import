@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://w4qd8goyh0p8"
-path="res://.godot/imported/Checkpoint (Flag Idle)(64x64).png-74d2006d26834d843f3f118d0e89d6fe.ctex"
+uid="uid://r0cqj5j7i8xo"
+path="res://.godot/imported/Platform_SU7.png-c0715efa5192531670086a385ea32eae.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Sprites/images/Tilemap/Checkpoint (Flag Idle)(64x64).png"
-dest_files=["res://.godot/imported/Checkpoint (Flag Idle)(64x64).png-74d2006d26834d843f3f118d0e89d6fe.ctex"]
+source_file="res://Assets/Sprites/maps/Platform_SU7.png"
+dest_files=["res://.godot/imported/Platform_SU7.png-c0715efa5192531670086a385ea32eae.ctex"]
 
 [params]
 

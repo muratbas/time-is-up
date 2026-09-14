@@ -102,7 +102,7 @@ script = ExtResource("3_rvsrt")
 
 [node name="menuMusic" type="AudioStreamPlayer" parent="." unique_id=560640561]
 stream = ExtResource("4_guoxd")
-autoplay = true
+autoplay = false
 bus = &"Music"
 parameters/looping = false
 

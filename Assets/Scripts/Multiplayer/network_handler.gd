@@ -113,6 +113,21 @@ func _on_server_disconnected() -> void:
 func _register_player(id: int, nick: String) -> void:
 	connected_players[id] = nick
 	player_list_changed.emit()
+	_sync_spawned_players_visuals()
+
+
+func _sync_spawned_players_visuals() -> void:
+	# Sahnedeki aktif player node'larının baş üstü nicklerini ve renklerini senkronize et
+	var players: Array[Node] = get_tree().get_nodes_in_group("players")
+	var keys: Array = connected_players.keys()
+	keys.sort()
+	for p: Node in players:
+		var p_id: Variant = p.get("player_id")
+		if p_id != null and connected_players.has(p_id):
+			p.set("nickname", connected_players[p_id])
+			var c_idx: int = keys.find(p_id)
+			if c_idx != -1 and p.has_method("set_player_color"):
+				p.call("set_player_color", c_idx)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -134,6 +149,7 @@ func _rpc_register_me(id: int, nick: String) -> void:
 func _rpc_player_joined(id: int, nick: String) -> void:
 	connected_players[id] = nick
 	player_list_changed.emit()
+	_sync_spawned_players_visuals()
 
 
 ## Server → Herkes: "Bu oyuncu ayrıldı"
@@ -141,6 +157,7 @@ func _rpc_player_joined(id: int, nick: String) -> void:
 func _rpc_player_left(id: int) -> void:
 	connected_players.erase(id)
 	player_list_changed.emit()
+	_sync_spawned_players_visuals()
 
 
 ## Server → YeniClient: Mevcut oyuncu listesini gönder
@@ -148,6 +165,7 @@ func _rpc_player_left(id: int) -> void:
 func _rpc_sync_player_list(player_dict: Dictionary) -> void:
 	connected_players = player_dict
 	player_list_changed.emit()
+	_sync_spawned_players_visuals()
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -193,6 +211,13 @@ func _spawn_player(id: int) -> void:
 	var player: Node2D = _player_scene.instantiate()
 	player.player_id = id
 	player.name = str(id)
+
+	# Sahnede tanımlı spawn noktaları varsa oyuncuyu o noktalara yerleştir
+	var spawn_pts: Array[Node] = get_tree().get_nodes_in_group("spawn_points")
+	if not spawn_pts.is_empty():
+		var idx: int = _players_spawn_node.get_child_count() % spawn_pts.size()
+		player.position = spawn_pts[idx].global_position
+
 	_players_spawn_node.add_child(player, true)
 
 	if _notify_game_manager:

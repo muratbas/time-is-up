@@ -6,11 +6,12 @@ extends Node2D
 # ══════════════════════════════════════════════════════════════════════════════
 
 func _ready() -> void:
+	# NetworkHandler'ın oyuncu listesi sinyaline önceden bağlan (ilk register sinyalini kaçırmamak için)
+	if not NetworkHandler.player_list_changed.is_connected(_refresh_player_list):
+		NetworkHandler.player_list_changed.connect(_refresh_player_list)
+
 	# Ağ kurulumu waiting area'da başlıyor
 	NetworkHandler.setup_multiplayer()
-
-	# NetworkHandler'ın oyuncu sinyal güncellemelerine bağlan
-	NetworkHandler.player_list_changed.connect(_refresh_player_list)
 
 	# Oyuncuları lobide spawn et (game_manager bilgilendirilmez)
 	var players_node: Node = _find_node("Players")

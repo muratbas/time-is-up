@@ -329,7 +329,7 @@ text = "Hata mesaji"
 
 [node name="menuMusic" type="AudioStreamPlayer" parent="." unique_id=83123997]
 stream = ExtResource("3_a1pxj")
-autoplay = true
+autoplay = false
 
 [node name="ClickSound" type="AudioStreamPlayer" parent="." unique_id=413645246]
 stream = ExtResource("4_u3gqi")
