@@ -12,7 +12,7 @@ script = ExtResource("1_fxyfw")
 offset_left = 216.0
 offset_top = 112.0
 offset_right = 435.0
-offset_bottom = 243.0
+offset_bottom = 210.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_fxyfw")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=1052283919]
@@ -27,6 +27,7 @@ layout_mode = 2
 text = "DEVAM ET"
 
 [node name="OptionsButton" type="Button" parent="PanelContainer/VBoxContainer" unique_id=2091935195]
+visible = false
 layout_mode = 2
 text = "AYARLAR"
 

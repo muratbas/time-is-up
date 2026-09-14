@@ -10,6 +10,10 @@ extends CharacterBody2D
 @onready var input_sync: MultiplayerSynchronizer = %InputSynchronizer
 @onready var nickname_label: Label = $NicknameLabel
 @onready var camera: Camera2D = $Camera2D
+@onready var jump_sound: AudioStreamPlayer2D = $JumpSound
+@onready var dash_sound: AudioStreamPlayer2D = $DashSound
+@onready var hurt_sound: AudioStreamPlayer2D = $HurtSound
+@onready var explosion_sound: AudioStreamPlayer2D = $ExplosionSound
 
 
 @export var player_id := 1:
@@ -32,8 +36,9 @@ const SPEED: float = 280.0
 const JUMP_VELOCITY: float = -600.0 # h = v²/(2g) → ~72px, yerçekimi 2500 ile
 const JUMP_CUT_MULTIPLIER: float = 0.35
 const MAX_JUMPS: int = 1
-const PUNCH_FORCE: float = 380.0
-const PUNCH_VERTICAL: float = -120.0
+const PUNCH_FORCE: float = 650.0
+const PUNCH_VERTICAL: float = -200.0
+
 const STUN_DURATION: float = 0.3
 const DASH_SPEED: float = 650.0
 const DASH_DURATION: float = 0.2
@@ -315,10 +320,19 @@ func _check_jump_cut() -> void:
 	pass
 
 
+func _execute_jump() -> void:
+	velocity.y = JUMP_VELOCITY
+	jumps_remaining -= 1
+	_transition(State.JUMPING)
+	if jump_sound: jump_sound.play()
+
+
 func _execute_double_jump() -> void:
 	velocity.y = JUMP_VELOCITY
 	jumps_remaining -= 1
 	_transition(State.JUMPING)
+	
+	if jump_sound: jump_sound.play()
 
 	# Çift zıplama efekti oyuncunun mevcut konumuna taşınır
 	double_jump_effect.global_position = global_position
@@ -410,6 +424,8 @@ func _perform_dash() -> void:
 		dash_direction = -1.0 if animated_sprite.flip_h else 1.0
 		
 	animated_sprite.play("tagdash" if is_tag else "dash")
+	if dash_sound: dash_sound.play()
+
 
 
 func _create_ghost_trail() -> void:
@@ -448,6 +464,18 @@ func receive_knockback(force: Vector2) -> void:
 	velocity = force
 	stun_timer = STUN_DURATION
 	_transition(State.STUNNED)
+	if hurt_sound: hurt_sound.play()
+
+
+	# Sadece bu oyuncunun ekranında kamera sarsıntısı olsun
+	if camera and camera.is_current():
+		# Vurulan yöne doğru hafif bir rotasyon (tilt) verip geri düzelt
+		var tilt_dir: float = sign(force.x)
+		var tween = create_tween()
+		tween.tween_property(camera, "rotation_degrees", 4.0 * tilt_dir, 0.05)
+		tween.tween_property(camera, "rotation_degrees", -2.0 * tilt_dir, 0.05)
+		tween.tween_property(camera, "rotation_degrees", 0.0, 0.1)
+
 
 
 
@@ -481,6 +509,8 @@ func eliminate() -> void:
 	_transition(State.IDLE)
 	modulate.a = 0.4 # Saydamlaş (hayalet)
 	animated_sprite.play("explode")
+	if explosion_sound: explosion_sound.play()
+
 
 
 	

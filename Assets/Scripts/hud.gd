@@ -12,8 +12,10 @@ var max_time_label: Label
 var game_over_panel: Control
 var result_label: Label
 var ping_label: Label
+var ten_seconds_sound: AudioStreamPlayer
+var win_sound: AudioStreamPlayer
 
-
+var _has_played_10s_sound: bool = false
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Başlangıç
@@ -21,15 +23,17 @@ var ping_label: Label
 
 func _ready() -> void:
 	# Node referanslarını isimle bul — path'e bağımlı değil
-	waiting_panel   = find_child("WaitingPanel", true, false) as Control
-	waiting_label   = find_child("CountLabel", true, false) as Label
-	hud_panel       = find_child("HUDPanel", true, false) as Control
-	timer_label     = find_child("TimerLabel", true, false) as Label
-	tag_label       = find_child("TagLabel", true, false) as Label
-	max_time_label  = find_child("MaxTimeLabel", true, false) as Label
+	waiting_panel = find_child("WaitingPanel", true, false) as Control
+	waiting_label = find_child("CountLabel", true, false) as Label
+	hud_panel = find_child("HUDPanel", true, false) as Control
+	timer_label = find_child("TimerLabel", true, false) as Label
+	tag_label = find_child("TagLabel", true, false) as Label
+	max_time_label = find_child("MaxTimeLabel", true, false) as Label
 	game_over_panel = find_child("GameOverPanel", true, false) as Control
-	result_label    = find_child("ResultLabel", true, false) as Label
-	ping_label      = find_child("PingLabel", true, false) as Label
+	result_label = find_child("ResultLabel", true, false) as Label
+	ping_label = find_child("PingLabel", true, false) as Label
+	ten_seconds_sound = find_child("TenSecondsSound", true, false) as AudioStreamPlayer
+	win_sound = find_child("WinSound", true, false) as AudioStreamPlayer
 
 
 	await get_tree().process_frame
@@ -58,7 +62,6 @@ func _ready() -> void:
 		_show_waiting_screen()
 
 
-
 # ══════════════════════════════════════════════════════════════════════════════
 # Frame Döngüsü — Bomba Sayacı
 # ══════════════════════════════════════════════════════════════════════════════
@@ -84,6 +87,16 @@ func _process(_delta: float) -> void:
 	# Bomba sayacını her frame güncelle; tüm peerlarda aynı değer (set_process=true)
 	var t: float = maxf(_game_manager.bomb_timer, 0.0)
 	timer_label.text = "%.1f" % t
+	
+	if t <= 10.0 and t > 0.0 and not _has_played_10s_sound:
+		if ten_seconds_sound:
+			ten_seconds_sound.play()
+		_has_played_10s_sound = true
+	elif t > 10.0:
+		if _has_played_10s_sound:
+			_has_played_10s_sound = false
+			if ten_seconds_sound:
+				ten_seconds_sound.stop()
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -91,22 +104,21 @@ func _process(_delta: float) -> void:
 # ══════════════════════════════════════════════════════════════════════════════
 
 func _show_waiting_screen() -> void:
-	if waiting_panel: waiting_panel.visible   = true
-	if hud_panel:     hud_panel.visible       = false
+	if waiting_panel: waiting_panel.visible = true
+	if hud_panel: hud_panel.visible = false
 	if game_over_panel: game_over_panel.visible = false
 
 
 func _show_hud() -> void:
-	if waiting_panel: waiting_panel.visible   = false
-	if hud_panel:     hud_panel.visible       = true
+	if waiting_panel: waiting_panel.visible = false
+	if hud_panel: hud_panel.visible = true
 	if game_over_panel: game_over_panel.visible = false
 
 
 func _show_game_over() -> void:
-	if waiting_panel: waiting_panel.visible   = false
-	if hud_panel:     hud_panel.visible       = false
+	if waiting_panel: waiting_panel.visible = false
+	if hud_panel: hud_panel.visible = false
 	if game_over_panel: game_over_panel.visible = true
-
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -123,7 +135,6 @@ func _on_game_started() -> void:
 	if max_time_label: max_time_label.text = "Maks: %.0fs" % _game_manager.current_bomb_time
 
 
-
 func _on_bomb_transferred(holder_id: int, _new_timer: float, max_timer: float) -> void:
 	# Bomba kime geçti, etiket güncelle
 	var nick: String = NetworkHandler.connected_players.get(holder_id, "Oyuncu %d" % holder_id)
@@ -135,11 +146,9 @@ func _on_bomb_transferred(holder_id: int, _new_timer: float, max_timer: float) -
 	if max_time_label: max_time_label.text = "Maks: %.0fs" % max_timer
 
 
-
 func _on_pressure_increased(new_max_time: float) -> void:
 	# Baskı arttı — etiket geçici olarak vurgula
 	if max_time_label: max_time_label.text = "⚡ Maks: %.0fs" % new_max_time
-
 
 
 func _on_player_eliminated(eliminated_id: int) -> void:
@@ -152,8 +161,10 @@ func _on_player_eliminated(eliminated_id: int) -> void:
 
 
 func _on_game_ended(winner_id: int) -> void:
+	if win_sound: win_sound.play()
 	_show_game_over()
 	var winner_nick: String = NetworkHandler.connected_players.get(winner_id, "Oyuncu %d" % winner_id)
+
 	if result_label:
 		if winner_id == multiplayer.get_unique_id():
 			result_label.text = "🏆 OYUNU KAZANDIN!"
@@ -163,8 +174,14 @@ func _on_game_ended(winner_id: int) -> void:
 			result_label.text = "🏆 %s oyunu kazandı!" % winner_nick
 
 
-
 func _on_menu_button_pressed() -> void:
+	print("Butona tıklandı! GameManager aranıyor...")
 	var gm: Node = get_tree().get_first_node_in_group("game_manager")
 	if gm:
-		gm.return_to_menu()
+		print("GameManager bulundu! Host mu? ", multiplayer.is_server())
+		if multiplayer.is_server():
+			gm.restart_game()
+		else:
+			print("HATA: Sadece kurucu (host) oyunu yeniden başlatabilir.")
+	else:
+		print("HATA: GameManager bulunamadı!")

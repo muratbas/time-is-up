@@ -9,6 +9,10 @@
 [ext_resource type="Texture2D" uid="uid://c7cynlxvhktht" path="res://Assets/Sprites/char/time_is_up_player_base (3).png" id="3_uiccu"]
 [ext_resource type="Texture2D" uid="uid://gwis1dakpuql" path="res://Assets/Sprites/char/double_jump_effect.png" id="4_ncuj1"]
 [ext_resource type="Texture2D" uid="uid://vbv34drk2qr2" path="res://Assets/Sprites/char/spritesheet.png" id="5_da8pg"]
+[ext_resource type="AudioStream" uid="uid://chhwe52a5tb4b" path="res://Assets/SFX/dash.wav" id="10_c8n8k"]
+[ext_resource type="AudioStream" uid="uid://cn7fwpce2bg0u" path="res://Assets/SFX/hitHurt.wav" id="11_mxtdi"]
+[ext_resource type="AudioStream" uid="uid://c6v6yrrm00lr6" path="res://Assets/SFX/jump.wav" id="12_vuo3w"]
+[ext_resource type="AudioStream" uid="uid://c3f5jae7nre2s" path="res://Assets/SFX/explosion.wav" id="13_mxtdi"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_da8pg"]
 properties/0/path = NodePath(".:player_id")
@@ -453,7 +457,7 @@ animations = [{
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hvx5h"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cjiiu"]
-size = Vector2(16, 15.75)
+size = Vector2(19, 20.875)
 
 [node name="player" type="CharacterBody2D" unique_id=551959532 groups=["players"]]
 collision_layer = 2
@@ -468,13 +472,17 @@ replication_config = SubResource("SceneReplicationConfig_6tr60")
 script = ExtResource("2_da8pg")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=2094936081]
+limit_left = -580
+limit_right = 1514
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=865814971]
 texture_filter = 1
+position = Vector2(-1, 0)
 sprite_frames = SubResource("SpriteFrames_mlk2r")
-animation = &"tagdash"
+animation = &"punch"
 autoplay = "idle"
-frame_progress = 0.37949422
+frame = 2
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1423131883]
 position = Vector2(0, 1)
@@ -519,5 +527,20 @@ collision_mask = 2
 monitoring = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PunchHitbox" unique_id=2010465362]
-position = Vector2(8, -2)
+position = Vector2(9.5, 0.5625)
 shape = SubResource("RectangleShape2D_cjiiu")
+
+[node name="DashSound" type="AudioStreamPlayer2D" parent="." unique_id=1562484314]
+stream = ExtResource("10_c8n8k")
+bus = &"SFX"
+
+[node name="HurtSound" type="AudioStreamPlayer2D" parent="." unique_id=897810894]
+stream = ExtResource("11_mxtdi")
+bus = &"SFX"
+
+[node name="JumpSound" type="AudioStreamPlayer2D" parent="." unique_id=1163079211]
+stream = ExtResource("12_vuo3w")
+bus = &"SFX"
+
+[node name="ExplosionSound" type="AudioStreamPlayer2D" parent="." unique_id=1498287202]
+stream = ExtResource("13_mxtdi")

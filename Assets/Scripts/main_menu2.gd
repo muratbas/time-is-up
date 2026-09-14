@@ -5,7 +5,10 @@ extends Node2D
 # Başlangıç
 # ══════════════════════════════════════════════════════════════════════════════
 
+@onready var click_sound: AudioStreamPlayer = $ClickSound
+
 func _ready() -> void:
+
 	var nick_input: LineEdit = _find_node("UsernameInput") as LineEdit
 	if nick_input:
 		nick_input.text = PlayerData.nickname
@@ -25,7 +28,9 @@ func _ready() -> void:
 # ══════════════════════════════════════════════════════════════════════════════
 
 func _on_host_pressed() -> void:
+	if click_sound: click_sound.play()
 	_save_nickname()
+
 
 	var local_ip: String = PlayerData.get_local_ip()
 	PlayerData.server_ip = local_ip
@@ -47,13 +52,17 @@ func _on_host_pressed() -> void:
 
 
 func _on_lobby_pressed() -> void:
+	if click_sound: click_sound.play()
 	# Host IP'yi gördükten sonra bu butonla waiting area'ya geçer
+
 	NetworkHandler.is_host = true
 	get_tree().change_scene_to_file("res://Assets/Scenes/Levels/waitin_area.tscn")
 
 
 func _on_join_pressed() -> void:
+	if click_sound: click_sound.play()
 	var ip_field: LineEdit = _find_node("IpInput") as LineEdit
+
 	var entered_ip: String = ip_field.text.strip_edges() if ip_field else ""
 
 	var err_label: Label = _find_node("IpErrorLabel") as Label

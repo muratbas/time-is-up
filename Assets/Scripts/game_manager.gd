@@ -13,10 +13,12 @@ signal player_eliminated(eliminated_id: int)
 const MIN_PLAYERS: int = 2
 
 ## Bombanın maksimum tutulma süresinin geçirdiği aşamalar
-const TIME_STEPS: Array[float] = [20.0, 10.0, 5.0]
+const TIME_STEPS: Array[float] = [30.0, 20.0, 10.0]
+
 
 ## Kaç başarılı transferde bir süre aşaması azalır
-const TRANSFERS_PER_STEP: int = 3
+const TRANSFERS_PER_STEP: int = 5
+
 
 # ── State Machine ─────────────────────────────────────────────────────────────
 enum GameState { WAITING, PLAYING, GAME_OVER }
@@ -256,3 +258,19 @@ func return_to_menu() -> void:
 	else:
 		NetworkHandler.reset()
 		get_tree().change_scene_to_file("res://Assets/Scenes/Menu/main_menu2.tscn")
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Yeniden Başlatma
+# ══════════════════════════════════════════════════════════════════════════════
+
+@rpc("authority", "call_local", "reliable")
+func _rpc_restart_game() -> void:
+	game_state = GameState.WAITING
+	bomb_timer = 0.0
+	get_tree().change_scene_to_file("res://Assets/Scenes/main.tscn")
+
+func restart_game() -> void:
+	if multiplayer.is_server():
+		_rpc_restart_game.rpc()
+

@@ -2,6 +2,8 @@
 
 [ext_resource type="Script" uid="uid://c4obgxvhe7kqf" path="res://Assets/Scripts/main_menu2.gd" id="1_eaxjr"]
 [ext_resource type="Texture2D" uid="uid://csct1ecbxdcvb" path="res://Assets/Sprites/images/Background/time_is_up_main_menu_bg.svg" id="2_a1pxj"]
+[ext_resource type="AudioStream" uid="uid://b7lnv2ooti6nr" path="res://Assets/SFX/mainmenu.mp3" id="3_a1pxj"]
+[ext_resource type="AudioStream" uid="uid://p2wj5m525did" path="res://Assets/SFX/click.wav" id="4_u3gqi"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eaxjr"]
 bg_color = Color(1, 1, 1, 1)
@@ -130,6 +132,13 @@ offset_top = 75.0
 offset_right = 232.0
 offset_bottom = 106.0
 text = "Lobiye Geç"
+
+[node name="menuMusic" type="AudioStreamPlayer" parent="." unique_id=83123997]
+stream = ExtResource("3_a1pxj")
+autoplay = true
+
+[node name="ClickSound" type="AudioStreamPlayer" parent="." unique_id=413645246]
+stream = ExtResource("4_u3gqi")
 
 [connection signal="pressed" from="button_manager/VBoxContainer/Host" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="button_manager/VBoxContainer/Join" to="." method="_on_join_pressed"]
