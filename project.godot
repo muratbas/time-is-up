@@ -23,6 +23,7 @@ buses/default_bus_layout="uid://prnbvk1jlpiy"
 
 NetworkHandler="*uid://b2gkg3t04mhak"
 PlayerData="*uid://bfrnw4ivdswy1"
+LobbyService="*res://Assets/Scripts/Multiplayer/lobby_service.gd"
 
 [display]
 
@@ -35,7 +36,7 @@ window/stretch/mode="canvas_items"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/bluebrains_character_controller/plugin.cfg", "res://addons/brennys-game-manager/plugin.cfg", "res://addons/to-do-list/plugin.cfg")
+enabled=PackedStringArray("res://addons/to-do-list/plugin.cfg")
 
 [input]
 

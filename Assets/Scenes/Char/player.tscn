@@ -13,6 +13,7 @@
 [ext_resource type="AudioStream" uid="uid://cn7fwpce2bg0u" path="res://Assets/SFX/hitHurt.wav" id="11_mxtdi"]
 [ext_resource type="AudioStream" uid="uid://c6v6yrrm00lr6" path="res://Assets/SFX/jump.wav" id="12_vuo3w"]
 [ext_resource type="AudioStream" uid="uid://c3f5jae7nre2s" path="res://Assets/SFX/explosion.wav" id="13_mxtdi"]
+[ext_resource type="FontFile" uid="uid://b7xny8kliv0q2" path="res://Assets/Fonts/The Bomb Sound.ttf" id="14_font"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_da8pg"]
 properties/0/path = NodePath(".:player_id")
@@ -510,14 +511,15 @@ sprite_frames = SubResource("SpriteFrames_v77ya")
 animation = &"puff"
 
 [node name="NicknameLabel" type="Label" parent="." unique_id=181400965]
-offset_left = -11.0
+offset_left = -30.0
 offset_top = -29.0
-offset_right = 17.0
+offset_right = 30.0
 offset_bottom = -15.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 1
-theme_override_font_sizes/font_size = 10
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("14_font")
+theme_override_font_sizes/font_size = 11
 theme_override_styles/normal = SubResource("StyleBoxEmpty_hvx5h")
 horizontal_alignment = 1
 

@@ -6,9 +6,93 @@
 [ext_resource type="AudioStream" uid="uid://b7lnv2ooti6nr" path="res://Assets/SFX/mainmenu.mp3" id="4_guoxd"]
 [ext_resource type="Script" uid="uid://c78ftrykhub7f" path="res://Assets/Scripts/hud.gd" id="6_acsc0"]
 [ext_resource type="PackedScene" uid="uid://dljfmj3annytv" path="res://Assets/Scenes/Menu/pause_menu.tscn" id="6_nacht"]
-[ext_resource type="FontFile" uid="uid://gogqic76ay" path="res://Assets/Fonts/KiwiSoda.ttf" id="7_acsc0"]
+[ext_resource type="FontFile" uid="uid://b7xny8kliv0q2" path="res://Assets/Fonts/The Bomb Sound.ttf" id="7_acsc0"]
 [ext_resource type="AudioStream" uid="uid://d4lshv1dghfdm" path="res://Assets/SFX/mixkit-start-countdown-927.wav" id="8_f8o6k"]
 [ext_resource type="AudioStream" uid="uid://cnny2xp4754j4" path="res://Assets/SFX/mixkit-video-game-win-2016.wav" id="9_4357x"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_TimerBadge"]
+bg_color = Color(0.12, 0.04, 0.04, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95, 0.35, 0.15, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_TagBadge"]
+bg_color = Color(0.08, 0.1, 0.16, 0.88)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.8, 0.2, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+expand_margin_left = 8.0
+expand_margin_top = 2.0
+expand_margin_right = 8.0
+expand_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_PingBadge"]
+bg_color = Color(0.06, 0.08, 0.14, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.45, 0.7, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+expand_margin_left = 6.0
+expand_margin_top = 2.0
+expand_margin_right = 6.0
+expand_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_GameOver"]
+bg_color = Color(0.05, 0.07, 0.12, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.8, 0.15, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0, 0, 0, 0.7)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_BtnRestart"]
+bg_color = Color(0, 0.78, 0.35, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.02, 0.15, 0.06, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_BtnMenu"]
+bg_color = Color(0.8, 0.18, 0.18, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.15, 0.02, 0.02, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [node name="Main" type="Node2D" unique_id=847079045]
 script = ExtResource("1_rvsrt")
@@ -38,65 +122,150 @@ script = ExtResource("6_acsc0")
 
 [node name="HUDPanel" type="Control" parent="HUD" unique_id=351911193]
 layout_mode = 3
-anchors_preset = 0
-offset_left = 182.0
-offset_top = 24.0
-offset_right = 222.0
-offset_bottom = 64.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
-[node name="TimerLabel" type="Label" parent="HUD/HUDPanel" unique_id=1765359472]
+[node name="PingContainer" type="PanelContainer" parent="HUD/HUDPanel" unique_id=1200391520]
 layout_mode = 0
-offset_left = 327.0
-offset_top = -11.0
-offset_right = 431.0
+offset_left = 14.0
+offset_top = 10.0
+offset_right = 95.0
 offset_bottom = 30.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/panel = SubResource("StyleBoxFlat_PingBadge")
+
+[node name="PingLabel" type="Label" parent="HUD/HUDPanel/PingContainer" unique_id=1200391519]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.85, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
 theme_override_fonts/font = ExtResource("7_acsc0")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 12
+text = "PING: -- MS"
 
-[node name="TagLabel" type="Label" parent="HUD/HUDPanel" unique_id=322752634]
-layout_mode = 0
-offset_left = 49.0
-offset_top = -13.0
-offset_right = 111.0
-offset_bottom = 10.0
+[node name="CenterBox" type="VBoxContainer" parent="HUD/HUDPanel" unique_id=1765359470]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -100.0
+offset_top = 8.0
+offset_right = 100.0
+offset_bottom = 80.0
+grow_horizontal = 2
+theme_override_constants/separation = 4
 
-[node name="PingLabel" type="Label" parent="HUD/HUDPanel" unique_id=1200391519]
-layout_mode = 0
-offset_left = -173.0
-offset_top = -17.0
-offset_right = -129.0
-offset_bottom = 7.0
+[node name="TimerPanel" type="PanelContainer" parent="HUD/HUDPanel/CenterBox" unique_id=1765359471]
+custom_minimum_size = Vector2(90, 36)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_TimerBadge")
+
+[node name="TimerLabel" type="Label" parent="HUD/HUDPanel/CenterBox/TimerPanel" unique_id=1765359472]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.2, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("7_acsc0")
+theme_override_font_sizes/font_size = 24
+text = "30.0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TagPanel" type="PanelContainer" parent="HUD/HUDPanel/CenterBox" unique_id=322752633]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_TagBadge")
+
+[node name="TagLabel" type="Label" parent="HUD/HUDPanel/CenterBox/TagPanel" unique_id=322752634]
+layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 17
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("7_acsc0")
+theme_override_font_sizes/font_size = 13
+text = "BOMBA HAZIRLANIYOR..."
+horizontal_alignment = 1
 
-[node name="GameOverPanel" type="Control" parent="HUD" unique_id=1158481425]
-layout_mode = 3
+[node name="GameOverPanel" type="PanelContainer" parent="HUD" unique_id=1158481425]
+visible = false
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 63.0
-offset_bottom = 20.0
+offset_left = -160.0
+offset_top = -95.0
+offset_right = 160.0
+offset_bottom = 95.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_GameOver")
 
-[node name="VBox" type="VBoxContainer" parent="HUD/GameOverPanel" unique_id=130920563]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="Margin" type="MarginContainer" parent="HUD/GameOverPanel" unique_id=130920562]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 16
 
-[node name="ResultLabel" type="Label" parent="HUD/GameOverPanel/VBox" unique_id=972923353]
+[node name="VBox" type="VBoxContainer" parent="HUD/GameOverPanel/Margin" unique_id=130920563]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TitleLabel" type="Label" parent="HUD/GameOverPanel/Margin/VBox" unique_id=972923352]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("7_acsc0")
+theme_override_font_sizes/font_size = 24
+text = "MAC SONUCU"
+horizontal_alignment = 1
+
+[node name="ResultLabel" type="Label" parent="HUD/GameOverPanel/Margin/VBox" unique_id=972923353]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("7_acsc0")
+theme_override_font_sizes/font_size = 15
+text = "KAZANAN BELIRLENIYOR..."
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="HUD/GameOverPanel/Margin/VBox" unique_id=130920564]
 layout_mode = 2
 
-[node name="MenuButton" type="Button" parent="HUD/GameOverPanel/VBox" unique_id=1286838636]
+[node name="HBox" type="HBoxContainer" parent="HUD/GameOverPanel/Margin/VBox" unique_id=130920565]
 layout_mode = 2
-text = "Yeniden Başlat"
+theme_override_constants/separation = 12
+
+[node name="RestartButton" type="Button" parent="HUD/GameOverPanel/Margin/VBox/HBox" unique_id=1286838636]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("7_acsc0")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_BtnRestart")
+text = "TEKRAR OYNA"
+
+[node name="MenuButton" type="Button" parent="HUD/GameOverPanel/Margin/VBox/HBox" unique_id=1286838637]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("7_acsc0")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_BtnMenu")
+text = "MENU"
 
 [node name="TenSecondsSound" type="AudioStreamPlayer" parent="HUD" unique_id=472490937]
 stream = ExtResource("8_f8o6k")
@@ -104,4 +273,6 @@ stream = ExtResource("8_f8o6k")
 [node name="WinSound" type="AudioStreamPlayer" parent="HUD" unique_id=574525737]
 stream = ExtResource("9_4357x")
 
-[connection signal="pressed" from="HUD/GameOverPanel/VBox/MenuButton" to="HUD" method="_on_menu_button_pressed"]
+[connection signal="pressed" from="HUD/GameOverPanel/Margin/VBox/HBox/RestartButton" to="HUD" method="_on_restart_button_pressed"]
+[connection signal="pressed" from="HUD/GameOverPanel/Margin/VBox/HBox/MenuButton" to="HUD" method="_on_menu_button_pressed"]
+

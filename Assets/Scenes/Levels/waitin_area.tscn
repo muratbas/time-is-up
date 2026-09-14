@@ -3,6 +3,65 @@
 [ext_resource type="PackedScene" uid="uid://k14y6g315785" path="res://Assets/Scenes/Levels/map.tscn" id="1_ip27n"]
 [ext_resource type="Script" uid="uid://b6s0xkg5fxe7p" path="res://Assets/Scripts/waiting_area.gd" id="2_1h6ma"]
 [ext_resource type="PackedScene" uid="uid://dljfmj3annytv" path="res://Assets/Scenes/Menu/pause_menu.tscn" id="3_lolxa"]
+[ext_resource type="FontFile" uid="uid://b7xny8kliv0q2" path="res://Assets/Fonts/The Bomb Sound.ttf" id="4_font"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Status"]
+bg_color = Color(0.06, 0.08, 0.14, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.45, 0.7, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+expand_margin_left = 8.0
+expand_margin_top = 4.0
+expand_margin_right = 8.0
+expand_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Card"]
+bg_color = Color(0.06, 0.08, 0.14, 0.88)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.45, 0.7, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Start"]
+bg_color = Color(0, 0.78, 0.35, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.02, 0.15, 0.06, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Leave"]
+bg_color = Color(0.8, 0.18, 0.18, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.15, 0.02, 0.02, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 2
 
 [node name="waiting_area" unique_id=1530014150 instance=ExtResource("1_ip27n")]
 script = ExtResource("2_1h6ma")
@@ -15,24 +74,85 @@ tile_map_data = PackedByteArray("AAAlABgAAAACAAIAAAAlABkAAAACAAIAAAAlABoAAAACAAI
 
 [node name="UI" type="CanvasLayer" parent="." index="2" unique_id=870037491]
 
-[node name="PlayerListContainer" type="VBoxContainer" parent="UI" index="0" unique_id=1871336369]
-offset_left = 470.0
-offset_top = 30.0
-offset_right = 536.0
-offset_bottom = 101.0
+[node name="StatusPanel" type="PanelContainer" parent="UI" index="0" unique_id=1708676245]
+offset_left = 16.0
+offset_top = 14.0
+offset_right = 420.0
+offset_bottom = 50.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_Status")
 
-[node name="StatusLabel" type="Label" parent="UI" index="1" unique_id=1708676244]
-offset_left = 15.0
-offset_top = 17.0
-offset_right = 126.0
-offset_bottom = 64.0
+[node name="StatusLabel" type="Label" parent="UI/StatusPanel" index="0" unique_id=1708676244]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.95, 0.5, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("4_font")
+theme_override_font_sizes/font_size = 14
+text = "OYUNCULAR BAGLANIYOR..."
+vertical_alignment = 1
 
-[node name="StartButton" type="Button" parent="UI" index="2" unique_id=272463723]
-offset_left = 551.0
-offset_top = 22.0
-offset_right = 607.0
-offset_bottom = 53.0
-text = "Başlat"
+[node name="PlayerCard" type="PanelContainer" parent="UI" index="1" unique_id=1871336368]
+offset_left = 440.0
+offset_top = 14.0
+offset_right = 625.0
+offset_bottom = 240.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_Card")
+
+[node name="Margin" type="MarginContainer" parent="UI/PlayerCard" index="0" unique_id=1871336370]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="UI/PlayerCard/Margin" index="0" unique_id=1871336371]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Header" type="Label" parent="UI/PlayerCard/Margin/VBox" index="0" unique_id=1871336372]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("4_font")
+theme_override_font_sizes/font_size = 15
+text = "OYUNCULAR"
+
+[node name="HSeparator" type="HSeparator" parent="UI/PlayerCard/Margin/VBox" index="1" unique_id=1871336373]
+layout_mode = 2
+
+[node name="PlayerListContainer" type="VBoxContainer" parent="UI/PlayerCard/Margin/VBox" index="2" unique_id=1871336369]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ButtonContainer" type="VBoxContainer" parent="UI" index="2" unique_id=272463724]
+offset_left = 440.0
+offset_top = 250.0
+offset_right = 625.0
+offset_bottom = 345.0
+theme_override_constants/separation = 8
+
+[node name="StartButton" type="Button" parent="UI/ButtonContainer" index="0" unique_id=272463723]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("4_font")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_Start")
+text = "OYUNU BASLAT"
+
+[node name="LeaveButton" type="Button" parent="UI/ButtonContainer" index="1" unique_id=272463725]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("4_font")
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_Leave")
+text = "MENUYE DON"
 
 [node name="PauseMenu" parent="." index="3" unique_id=1601005604 instance=ExtResource("3_lolxa")]
 
@@ -43,4 +163,6 @@ position = Vector2(132, 288)
 _spawnable_scenes = PackedStringArray("uid://8s325ht8ke3a")
 spawn_path = NodePath("../Players")
 
-[connection signal="pressed" from="UI/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="UI/ButtonContainer/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="UI/ButtonContainer/LeaveButton" to="." method="_on_leave_button_pressed"]
+

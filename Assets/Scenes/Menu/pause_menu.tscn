@@ -1,40 +1,116 @@
 [gd_scene format=3 uid="uid://dljfmj3annytv"]
 
 [ext_resource type="Script" uid="uid://bshyxqffydhgq" path="res://Assets/Scripts/pause_menu.gd" id="1_fxyfw"]
+[ext_resource type="FontFile" uid="uid://b7xny8kliv0q2" path="res://Assets/Fonts/The Bomb Sound.ttf" id="2_font"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fxyfw"]
-bg_color = Color(0.11, 0.11, 0.11, 0.18431373)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Card"]
+bg_color = Color(0.06, 0.08, 0.13, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.45, 0.65, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.6)
+shadow_size = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Resume"]
+bg_color = Color(0, 0.78, 0.35, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.02, 0.15, 0.06, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Menu"]
+bg_color = Color(0.8, 0.18, 0.18, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.15, 0.02, 0.02, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [node name="PauseMenu" type="CanvasLayer" unique_id=260352279]
 script = ExtResource("1_fxyfw")
 
+[node name="ColorRect" type="ColorRect" parent="." unique_id=260352280]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.4)
+
 [node name="PanelContainer" type="PanelContainer" parent="." unique_id=1533848209]
-offset_left = 216.0
-offset_top = 112.0
-offset_right = 435.0
-offset_bottom = 210.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_fxyfw")
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -110.0
+offset_top = -75.0
+offset_right = 110.0
+offset_bottom = 75.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_Card")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=1052283919]
+[node name="Margin" type="MarginContainer" parent="PanelContainer" unique_id=1533848210]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/Margin" unique_id=1052283919]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="PanelContainer/Margin/VBoxContainer" unique_id=323910187]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 18
+text = "DURAKLATILDI"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/Margin/VBoxContainer" unique_id=323910188]
 layout_mode = 2
 
-[node name="TitleLabel" type="Label" parent="PanelContainer/VBoxContainer" unique_id=323910187]
+[node name="ResumeButton" type="Button" parent="PanelContainer/Margin/VBoxContainer" unique_id=459253560]
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
-text = "        ⏸ DURAKLATILDI"
-
-[node name="ResumeButton" type="Button" parent="PanelContainer/VBoxContainer" unique_id=459253560]
-layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_Resume")
 text = "DEVAM ET"
 
-[node name="OptionsButton" type="Button" parent="PanelContainer/VBoxContainer" unique_id=2091935195]
-visible = false
+[node name="MainMenuButton" type="Button" parent="PanelContainer/Margin/VBoxContainer" unique_id=1130189731]
+custom_minimum_size = Vector2(0, 28)
 layout_mode = 2
-text = "AYARLAR"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_Menu")
+text = "ANA MENU"
 
-[node name="MainMenuButton" type="Button" parent="PanelContainer/VBoxContainer" unique_id=1130189731]
-layout_mode = 2
-text = "ANA MENÜ"
-
-[connection signal="pressed" from="PanelContainer/VBoxContainer/ResumeButton" to="." method="_on_resume_pressed"]
-[connection signal="pressed" from="PanelContainer/VBoxContainer/OptionsButton" to="." method="_on_options_pressed"]
-[connection signal="pressed" from="PanelContainer/VBoxContainer/MainMenuButton" to="." method="_on_main_menu_pressed"]
+[connection signal="pressed" from="PanelContainer/Margin/VBoxContainer/ResumeButton" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="PanelContainer/Margin/VBoxContainer/MainMenuButton" to="." method="_on_main_menu_pressed"]

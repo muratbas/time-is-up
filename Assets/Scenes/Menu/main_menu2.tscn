@@ -2,136 +2,330 @@
 
 [ext_resource type="Script" uid="uid://c4obgxvhe7kqf" path="res://Assets/Scripts/main_menu2.gd" id="1_eaxjr"]
 [ext_resource type="Texture2D" uid="uid://csct1ecbxdcvb" path="res://Assets/Sprites/images/Background/time_is_up_main_menu_bg.svg" id="2_a1pxj"]
+[ext_resource type="FontFile" uid="uid://b7xny8kliv0q2" path="res://Assets/Fonts/The Bomb Sound.ttf" id="3_font"]
 [ext_resource type="AudioStream" uid="uid://b7lnv2ooti6nr" path="res://Assets/SFX/mainmenu.mp3" id="3_a1pxj"]
 [ext_resource type="AudioStream" uid="uid://p2wj5m525did" path="res://Assets/SFX/click.wav" id="4_u3gqi"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eaxjr"]
-bg_color = Color(1, 1, 1, 1)
-corner_radius_top_left = 11
-corner_radius_top_right = 11
-corner_radius_bottom_right = 11
-corner_radius_bottom_left = 11
-corner_detail = 20
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Card"]
+bg_color = Color(0.06, 0.08, 0.13, 0.88)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.24, 0.35, 0.5, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u3gqi"]
-bg_color = Color(1, 1, 1, 1)
-corner_radius_top_left = 11
-corner_radius_top_right = 11
-corner_radius_bottom_right = 11
-corner_radius_bottom_left = 11
-corner_detail = 20
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Input"]
+bg_color = Color(0.1, 0.13, 0.18, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.5, 0.8, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+expand_margin_left = 4.0
+expand_margin_top = 2.0
+expand_margin_right = 4.0
+expand_margin_bottom = 2.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hmrfg"]
-bg_color = Color(1, 1, 1, 1)
-corner_radius_top_left = 11
-corner_radius_top_right = 11
-corner_radius_bottom_right = 11
-corner_radius_bottom_left = 11
-corner_detail = 20
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Host"]
+bg_color = Color(0.95, 0.35, 0.15, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.15, 0.05, 0.02, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 2
+shadow_offset = Vector2(0, 2)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_khkix"]
-bg_color = Color(1, 1, 1, 1)
-corner_radius_top_left = 11
-corner_radius_top_right = 11
-corner_radius_bottom_right = 11
-corner_radius_bottom_left = 11
-corner_detail = 20
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Host_Hover"]
+bg_color = Color(1, 0.48, 0.25, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a1pxj"]
-bg_color = Color(1, 1, 1, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Join"]
+bg_color = Color(0.0, 0.78, 0.35, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.02, 0.15, 0.06, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 2
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Join_Hover"]
+bg_color = Color(0.2, 0.95, 0.5, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Lobby"]
+bg_color = Color(1, 0.75, 0.0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.15, 0.0, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 2
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Lobby_Hover"]
+bg_color = Color(1, 0.88, 0.2, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Quit"]
+bg_color = Color(0.8, 0.18, 0.18, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.15, 0.02, 0.02, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Quit_Hover"]
+bg_color = Color(0.95, 0.3, 0.3, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [node name="Main Menu" type="Node2D" unique_id=1118124919]
 script = ExtResource("1_eaxjr")
 
 [node name="background" type="TextureRect" parent="." unique_id=843412908]
-offset_right = 624.0
-offset_bottom = 339.0
+offset_right = 640.0
+offset_bottom = 360.0
 texture = ExtResource("2_a1pxj")
 expand_mode = 1
+
+[node name="TitleLabel" type="Label" parent="." unique_id=987123456]
+offset_left = 20.0
+offset_top = 18.0
+offset_right = 620.0
+offset_bottom = 68.0
+theme_override_colors/font_color = Color(1, 0.85, 0.1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_colors/font_outline_color = Color(0.08, 0.04, 0.02, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 42
+text = "TIME IS UP!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SubTitleLabel" type="Label" parent="." unique_id=987123457]
+offset_left = 20.0
+offset_top = 62.0
+offset_right = 620.0
+offset_bottom = 82.0
+theme_override_colors/font_color = Color(0.85, 0.9, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 14
+text = "★ PATLAYAN BOMBA PARTI OYUNU ★"
+horizontal_alignment = 1
 
 [node name="button_manager" type="Control" parent="." unique_id=1222568077]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 640.0
+offset_bottom = 360.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="button_manager" unique_id=974352126]
-layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = 18.0
-offset_top = 61.0
-offset_right = 130.0
-offset_bottom = 165.0
-grow_vertical = 2
+layout_mode = 0
+offset_left = 40.0
+offset_top = 100.0
+offset_right = 230.0
+offset_bottom = 320.0
+theme_override_constants/separation = 10
 
 [node name="Host" type="Button" parent="button_manager/VBoxContainer" unique_id=1456897785]
+custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_eaxjr")
-text = "Oyun Kur"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_Host")
+theme_override_styles/hover = SubResource("StyleBoxFlat_Host_Hover")
+text = "OYUN KUR"
 
 [node name="Join" type="Button" parent="button_manager/VBoxContainer" unique_id=82405761]
+custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_u3gqi")
-text = "Bağlan"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_Join")
+theme_override_styles/hover = SubResource("StyleBoxFlat_Join_Hover")
+text = "HIZLI BAGLAN"
 
-[node name="Options" type="Button" parent="button_manager/VBoxContainer" unique_id=208739287]
+[node name="LobbyButton" type="Button" parent="button_manager/VBoxContainer" unique_id=631599400]
+custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_hmrfg")
-text = "Ayarlar"
+theme_override_colors/font_color = Color(0.15, 0.1, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_Lobby")
+theme_override_styles/hover = SubResource("StyleBoxFlat_Lobby_Hover")
+text = "LOBIYE GEC"
 
 [node name="Quit" type="Button" parent="button_manager/VBoxContainer" unique_id=1081114852]
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_khkix")
-text = "Çıkış"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_Quit")
+theme_override_styles/hover = SubResource("StyleBoxFlat_Quit_Hover")
+text = "CIKIS"
 
-[node name="IpDisplayLabel" type="Label" parent="button_manager" unique_id=1034640792]
-unique_name_in_owner = true
+[node name="RightCard" type="PanelContainer" parent="button_manager" unique_id=112233445]
 layout_mode = 0
-offset_left = 166.0
-offset_top = 200.0
-offset_right = 296.0
-offset_bottom = 228.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_a1pxj")
+offset_left = 260.0
+offset_top = 100.0
+offset_right = 600.0
+offset_bottom = 320.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_Card")
 
-[node name="IpInput" type="LineEdit" parent="button_manager" unique_id=1370129984]
+[node name="Margin" type="MarginContainer" parent="button_manager/RightCard" unique_id=112233446]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="CardVBox" type="VBoxContainer" parent="button_manager/RightCard/Margin" unique_id=112233447]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="NickHeader" type="Label" parent="button_manager/RightCard/Margin/CardVBox" unique_id=112233448]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 14
+text = "KULLANICI ADIN:"
+
+[node name="UsernameInput" type="LineEdit" parent="button_manager/RightCard/Margin/CardVBox" unique_id=706608421]
 unique_name_in_owner = true
-layout_mode = 0
-offset_left = 17.0
-offset_top = 196.0
-offset_right = 160.0
-offset_bottom = 227.0
-placeholder_text = "Sunucu IP...."
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_Input")
+placeholder_text = "Oyuncu adi giriniz..."
+max_length = 10
+
+[node name="HSeparator" type="HSeparator" parent="button_manager/RightCard/Margin/CardVBox" unique_id=112233449]
+layout_mode = 2
+
+[node name="IpHeader" type="Label" parent="button_manager/RightCard/Margin/CardVBox" unique_id=112233450]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.85, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 14
+text = "SUNUCU IP (MANUEL / OPSIYONEL):"
+
+[node name="IpInput" type="LineEdit" parent="button_manager/RightCard/Margin/CardVBox" unique_id=1370129984]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_Input")
+placeholder_text = "Bos birak = Firebase ile otomatik baglan"
 max_length = 15
 
-[node name="IpErrorLabel" type="Label" parent="button_manager" unique_id=301060577]
+[node name="IpDisplayLabel" type="Label" parent="button_manager/RightCard/Margin/CardVBox" unique_id=1034640792]
 unique_name_in_owner = true
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 13
+text = "Sunucu IP: 192.168.1.5"
 
-[node name="UsernameInput" type="LineEdit" parent="button_manager" unique_id=706608421]
+[node name="IpErrorLabel" type="Label" parent="button_manager/RightCard/Margin/CardVBox" unique_id=301060577]
 unique_name_in_owner = true
-layout_mode = 0
-offset_left = 16.0
-offset_top = 233.0
-offset_right = 160.0
-offset_bottom = 264.0
-placeholder_text = "kullanıcı adı"
-
-[node name="LobbyButton" type="Button" parent="button_manager" unique_id=631599400]
-layout_mode = 0
-offset_left = 140.0
-offset_top = 75.0
-offset_right = 232.0
-offset_bottom = 106.0
-text = "Lobiye Geç"
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 13
+text = "Hata mesaji"
 
 [node name="menuMusic" type="AudioStreamPlayer" parent="." unique_id=83123997]
 stream = ExtResource("3_a1pxj")
@@ -142,6 +336,5 @@ stream = ExtResource("4_u3gqi")
 
 [connection signal="pressed" from="button_manager/VBoxContainer/Host" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="button_manager/VBoxContainer/Join" to="." method="_on_join_pressed"]
-[connection signal="pressed" from="button_manager/VBoxContainer/Options" to="." method="_on_options_pressed"]
+[connection signal="pressed" from="button_manager/VBoxContainer/LobbyButton" to="." method="_on_lobby_pressed"]
 [connection signal="pressed" from="button_manager/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
-[connection signal="pressed" from="button_manager/LobbyButton" to="." method="_on_lobby_pressed"]

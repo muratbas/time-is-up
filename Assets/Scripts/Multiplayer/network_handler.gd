@@ -13,7 +13,7 @@ var is_host: bool = false
 ## peer_id → nickname eşlemesi; tüm peerlarda senkronize tutulur
 var connected_players: Dictionary = {}
 
-var _player_scene = preload("res://Assets/Scenes/Char/player.tscn")
+var _player_scene: PackedScene = preload("res://Assets/Scenes/Char/player.tscn")
 var _players_spawn_node: Node = null
 var _notify_game_manager: bool = false
 
@@ -21,6 +21,8 @@ var _notify_game_manager: bool = false
 
 func reset() -> void:
 	# Menüye dönünce tüm ağ durumu sıfırlanır
+	if is_host and LobbyService:
+		LobbyService.clear_debug_lobby()
 	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 	connected_players.clear()
 	_players_spawn_node = null

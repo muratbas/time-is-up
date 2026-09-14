@@ -116,9 +116,6 @@ func _ready() -> void:
 		color_index = 0
 	animated_sprite.modulate = PLAYER_COLORS[color_index % PLAYER_COLORS.size()]
 
-
-	animated_sprite.modulate = PLAYER_COLORS[color_index % PLAYER_COLORS.size()]
-
 	double_jump_effect.visible = false
 
 
@@ -214,9 +211,6 @@ func _transition(new_state: State) -> void:
 func _state_idle() -> void:
 	velocity.x = move_toward(velocity.x, 0.0, SPEED)
 
-	_check_punch()
-	_check_jump()
-
 	var direction: float = input_sync.input_direction
 	if direction != 0.0:
 		_transition(State.RUNNING)
@@ -228,9 +222,6 @@ func _state_running() -> void:
 	var direction: float = input_sync.input_direction
 	velocity.x = direction * SPEED
 
-	_check_punch()
-	_check_jump()
-
 	if direction == 0.0:
 		_transition(State.IDLE)
 	elif not is_on_floor():
@@ -241,10 +232,6 @@ func _state_jumping() -> void:
 	var direction: float = input_sync.input_direction
 	velocity.x = direction * SPEED if direction != 0.0 else move_toward(velocity.x, 0.0, SPEED)
 
-	_check_punch()
-	_check_jump()
-	_check_jump_cut()
-
 	if velocity.y >= 0.0:
 		_transition(State.FALLING)
 
@@ -252,9 +239,6 @@ func _state_jumping() -> void:
 func _state_falling() -> void:
 	var direction: float = input_sync.input_direction
 	velocity.x = direction * SPEED if direction != 0.0 else move_toward(velocity.x, 0.0, SPEED)
-
-	_check_punch()
-	_check_jump()
 
 	if is_on_floor():
 		jumps_remaining = MAX_JUMPS
@@ -305,19 +289,7 @@ func _state_dashing(delta: float) -> void:
 # Ortak Eylemler (Birden fazla state'te kullanılır)
 # ══════════════════════════════════════════════════════════════════════════════
 
-func _check_punch() -> void:
-	# Punch RPC tarafından doğrudan _perform_punch() çağrılır; bu fonksiyon artık kullanılmıyor
-	pass
 
-
-func _check_jump() -> void:
-	# Jump RPC tarafından doğrudan tetiklenir; bu fonksiyon artık kullanılmıyor
-	pass
-
-
-func _check_jump_cut() -> void:
-	# RPC tarafından tetiklenir; bu fonksiyon artık kullanılmıyor
-	pass
 
 
 func _execute_jump() -> void:
@@ -514,9 +486,9 @@ func eliminate() -> void:
 
 
 	
-	# Zeminden düşmemesi için maskeyi (mask) ellemeyip sadece kendi varlığını (layer) gizliyoruz.
+	# Zeminden düşmemesi için maskeyi (mask) ellemeyip sadece kendi varlığını (layer 2: Player) gizliyoruz.
 	# Böylece diğer canlı oyuncular, ölü oyuncunun içinden geçip gidebilir (engellenmezler).
-	set_collision_layer_value(1, false)
+	set_collision_layer_value(2, false)
 	
 	punch_hitbox.monitoring = false
 	nickname_label.text += " (ELENDİ)"

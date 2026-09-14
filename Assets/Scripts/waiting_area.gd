@@ -27,6 +27,8 @@ func _ready() -> void:
 		start_btn.visible = false
 
 
+var _font: FontFile = preload("res://Assets/Fonts/The Bomb Sound.ttf")
+
 # ══════════════════════════════════════════════════════════════════════════════
 # Oyuncu Listesi
 # ══════════════════════════════════════════════════════════════════════════════
@@ -40,15 +42,35 @@ func _refresh_player_list() -> void:
 	for child in list.get_children():
 		child.queue_free()
 
-	# Her bağlı oyuncu için bir label ekle
-	for nick: String in NetworkHandler.connected_players.values():
+	# Her bağlı oyuncu için retro arcade etiket ekle
+	var player_ids: Array = NetworkHandler.connected_players.keys()
+	player_ids.sort()
+
+	for i in range(player_ids.size()):
+		var p_id: int = player_ids[i]
+		var nick: String = NetworkHandler.connected_players[p_id]
 		var label: Label = Label.new()
-		label.text = "• %s" % nick
+		
+		var is_me: bool = (p_id == multiplayer.get_unique_id())
+		var is_host: bool = (p_id == 1)
+		
+		var tag_str: String = ""
+		if is_host:
+			tag_str += " [HOST]"
+		if is_me:
+			tag_str += " (SEN)"
+
+		label.text = "%d. %s%s" % [i + 1, nick, tag_str]
+		label.add_theme_font_override("font", _font)
+		label.add_theme_font_size_override("font_size", 14)
+		label.add_theme_color_override("font_color", Color(1.0, 0.9, 0.3) if is_host else Color(1.0, 1.0, 1.0))
+		label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+		label.add_theme_constant_override("outline_size", 3)
 		list.add_child(label)
 
 	_update_status()
 
-	# Host bağlantısı kurulduktan sonra butonu göster
+	# Host bağlantısı kurulduktan sonra başlat butonunu göster
 	var start_btn: Button = _find_node("StartButton") as Button
 	if start_btn:
 		start_btn.visible = multiplayer.is_server()
@@ -60,9 +82,15 @@ func _update_status() -> void:
 		return
 	var count: int = NetworkHandler.connected_players.size()
 	if multiplayer.is_server():
-		status_lbl.text = "%d oyuncu bağlı — Oyunu başlatmak için butona bas." % count
+		status_lbl.text = "%d OYUNCU BAGLI - BASLATMAK ICIN BUTONA BASIN!" % count
 	else:
-		status_lbl.text = "%d oyuncu bağlı — Host oyunu başlatmasını bekle..." % count
+		status_lbl.text = "%d OYUNCU BAGLI - HOSTUN BASLATMASI BEKLENIYOR..." % count
+
+
+func _on_leave_button_pressed() -> void:
+	NetworkHandler.reset()
+	get_tree().change_scene_to_file("res://Assets/Scenes/Menu/main_menu2.tscn")
+
 
 
 # ══════════════════════════════════════════════════════════════════════════════
