@@ -29,6 +29,16 @@ func _ready() -> void:
 	if lobby_btn:
 		lobby_btn.visible = false
 
+	# Harita seçim butonu ve antrenman modu bağlantıları
+	var map_btn: Button = _find_node("MapSelect") as Button
+	if map_btn:
+		map_btn.text = "HARITA: %s" % PlayerData.get_selected_map_name()
+		map_btn.pressed.connect(_on_map_select_pressed)
+
+	var practice_btn: Button = _find_node("Practice") as Button
+	if practice_btn:
+		practice_btn.pressed.connect(_on_practice_pressed)
+
 	# Firebase lobi sinyallerine bağlan
 	LobbyService.lobby_fetched.connect(_on_firebase_lobby_fetched)
 	LobbyService.lobby_fetch_failed.connect(_on_firebase_lobby_failed)
@@ -102,6 +112,20 @@ func _on_join_pressed() -> void:
 		return
 
 	_connect_to_ip(entered_ip)
+
+
+func _on_map_select_pressed() -> void:
+	if click_sound: click_sound.play()
+	var new_name: String = PlayerData.cycle_map()
+	var map_btn: Button = _find_node("MapSelect") as Button
+	if map_btn:
+		map_btn.text = "HARITA: %s" % new_name
+
+
+func _on_practice_pressed() -> void:
+	if click_sound: click_sound.play()
+	_save_nickname()
+	get_tree().change_scene_to_file("res://Assets/Scenes/Levels/test_arena.tscn")
 
 
 # ══════════════════════════════════════════════════════════════════════════════

@@ -9,6 +9,15 @@
 [ext_resource type="FontFile" uid="uid://b7xny8kliv0q2" path="res://Assets/Fonts/The Bomb Sound.ttf" id="7_acsc0"]
 [ext_resource type="AudioStream" uid="uid://d4lshv1dghfdm" path="res://Assets/SFX/mixkit-start-countdown-927.wav" id="8_f8o6k"]
 [ext_resource type="AudioStream" uid="uid://cnny2xp4754j4" path="res://Assets/SFX/mixkit-video-game-win-2016.wav" id="9_4357x"]
+[ext_resource type="AudioStream" uid="uid://p2wj5m525did" path="res://Assets/SFX/click.wav" id="10_click"]
+[ext_resource type="Shader" path="res://Assets/Shaders/vignette.gdshader" id="11_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vignette"]
+shader = ExtResource("11_shader")
+shader_parameter/vignette_color = Color(0.9, 0.05, 0.05, 1)
+shader_parameter/inner_radius = 0.4
+shader_parameter/outer_radius = 1.15
+shader_parameter/intensity = 0.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_TimerBadge"]
 bg_color = Color(0.12, 0.04, 0.04, 0.9)
@@ -119,6 +128,20 @@ spawn_limit = 5
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=481810355]
 script = ExtResource("6_acsc0")
+
+[node name="VignetteRect" type="ColorRect" parent="HUD" unique_id=987654321]
+visible = false
+material = SubResource("ShaderMaterial_vignette")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TickSound" type="AudioStreamPlayer" parent="HUD" unique_id=987654322]
+stream = ExtResource("10_click")
+bus = &"SFX"
 
 [node name="HUDPanel" type="Control" parent="HUD" unique_id=351911193]
 layout_mode = 3

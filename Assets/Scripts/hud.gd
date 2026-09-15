@@ -11,8 +11,11 @@ var result_label: Label
 var ping_label: Label
 var ten_seconds_sound: AudioStreamPlayer
 var win_sound: AudioStreamPlayer
+var vignette_rect: ColorRect
+var tick_sound: AudioStreamPlayer
 
 var _has_played_10s_sound: bool = false
+var _tick_timer: float = 0.0
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Başlangıç
@@ -28,6 +31,11 @@ func _ready() -> void:
 	ping_label = find_child("PingLabel", true, false) as Label
 	ten_seconds_sound = find_child("TenSecondsSound", true, false) as AudioStreamPlayer
 	win_sound = find_child("WinSound", true, false) as AudioStreamPlayer
+	vignette_rect = find_child("VignetteRect", true, false) as ColorRect
+	tick_sound = find_child("TickSound", true, false) as AudioStreamPlayer
+
+	if vignette_rect:
+		vignette_rect.visible = false
 
 	await get_tree().process_frame
 	_game_manager = get_tree().get_first_node_in_group("game_manager")
@@ -76,20 +84,43 @@ func _process(_delta: float) -> void:
 	# Bomba sayacını her frame güncelle
 	var t: float = maxf(_game_manager.bomb_timer, 0.0)
 	timer_label.text = "%.1f" % t
-	
-	# Son 10 saniye: Retro arcade nabız ve renk değişimi
-	if t <= 10.0 and t > 0.0:
-		timer_label.add_theme_color_override("font_color", Color(1.0, 0.25, 0.25, 1.0))
-		if not _has_played_10s_sound:
-			if ten_seconds_sound:
-				ten_seconds_sound.play()
-			_has_played_10s_sound = true
+
+	# Son 6 saniye: Gerilim Efektleri (Nabız atan kırmızı vinyet ve hızlanan tık-tık sesi)
+	if t <= 6.0 and t > 0.0:
+		timer_label.add_theme_color_override("font_color", Color(1.0, 0.2, 0.2, 1.0))
+		var urgency: float = 1.0 - (t / 6.0)
+
+		# 1. Kırmızı Vinyet Nabız Efekti
+		if vignette_rect:
+			vignette_rect.visible = true
+			var pulse_speed: float = 0.012 + (urgency * 0.018)
+			var pulse: float = (sin(float(Time.get_ticks_msec()) * pulse_speed) + 1.0) * 0.5
+			var vignette_intensity: float = (0.3 + 0.5 * urgency) * (0.65 + 0.35 * pulse)
+			(vignette_rect.material as ShaderMaterial).set_shader_parameter("intensity", vignette_intensity)
+
+		# 2. Hızlanan Tık-Tık Sesi (Gerilim Ticking)
+		_tick_timer -= _delta
+		var tick_interval: float = lerpf(0.65, 0.14, urgency)
+		if _tick_timer <= 0.0:
+			_tick_timer = tick_interval
+			if tick_sound:
+				tick_sound.pitch_scale = 1.0 + (urgency * 0.8)
+				tick_sound.play()
 	else:
-		timer_label.add_theme_color_override("font_color", Color(1.0, 0.9, 0.2, 1.0))
-		if _has_played_10s_sound:
-			_has_played_10s_sound = false
-			if ten_seconds_sound:
-				ten_seconds_sound.stop()
+		if vignette_rect and vignette_rect.visible:
+			vignette_rect.visible = false
+		if t <= 10.0 and t > 0.0:
+			timer_label.add_theme_color_override("font_color", Color(1.0, 0.4, 0.2, 1.0))
+			if not _has_played_10s_sound:
+				if ten_seconds_sound:
+					ten_seconds_sound.play()
+				_has_played_10s_sound = true
+		else:
+			timer_label.add_theme_color_override("font_color", Color(1.0, 0.9, 0.2, 1.0))
+			if _has_played_10s_sound:
+				_has_played_10s_sound = false
+				if ten_seconds_sound:
+					ten_seconds_sound.stop()
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -102,6 +133,7 @@ func _show_hud() -> void:
 
 
 func _show_game_over() -> void:
+	if vignette_rect: vignette_rect.visible = false
 	if hud_panel: hud_panel.visible = false
 	if game_over_panel: game_over_panel.visible = true
 

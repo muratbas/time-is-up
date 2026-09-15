@@ -1,0 +1,156 @@
+[gd_scene format=3 uid="uid://c8m3v0xq5e1y7"]
+
+[ext_resource type="Script" path="res://Assets/Scripts/test_arena.gd" id="1_test_arena"]
+[ext_resource type="Texture2D" uid="uid://gjj05rnn2dee" path="res://Assets/Sprites/maps/BG_SU.jpg" id="2_bg"]
+[ext_resource type="Texture2D" uid="uid://dlv8nng07nqnh" path="res://Assets/Sprites/maps/Platform_SU9.png" id="3_plat9"]
+[ext_resource type="Texture2D" uid="uid://byt0che0wg6d7" path="res://Assets/Sprites/maps/Platform_SU10.png" id="4_plat10"]
+[ext_resource type="Texture2D" uid="uid://c3fqumbr7srvv" path="res://Assets/Sprites/maps/Platform_SU5.png" id="5_plat5"]
+[ext_resource type="Texture2D" uid="uid://r0cqj5j7i8xo" path="res://Assets/Sprites/maps/Platform_SU7.png" id="6_plat7"]
+[ext_resource type="Texture2D" uid="uid://bp48uneige7n8" path="res://Assets/Sprites/maps/Platform_SU4.png" id="7_plat4"]
+[ext_resource type="PackedScene" uid="uid://8s325ht8ke3a" path="res://Assets/Scenes/Char/player.tscn" id="8_player"]
+[ext_resource type="Script" path="res://Assets/Scripts/multi_target_camera.gd" id="9_camera"]
+[ext_resource type="Script" path="res://Assets/Scripts/killzone.gd" id="10_killzone"]
+[ext_resource type="PackedScene" uid="uid://dljfmj3annytv" path="res://Assets/Scenes/Menu/pause_menu.tscn" id="11_pause"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_plat7"]
+size = Vector2(380, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_plat4"]
+size = Vector2(280, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_killzone_bottom"]
+size = Vector2(4500, 250)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_killzone_side"]
+size = Vector2(250, 3000)
+
+[node name="TestArena" type="Node2D"]
+script = ExtResource("1_test_arena")
+
+[node name="Background" type="Sprite2D" parent="."]
+z_index = -20
+texture = ExtResource("2_bg")
+
+[node name="MainStage" type="StaticBody2D" parent="."]
+position = Vector2(0, 160)
+scale = Vector2(0.9, 0.9)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="MainStage"]
+texture = ExtResource("3_plat9")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="MainStage"]
+polygon = PackedVector2Array(-500, -320, -420, -350, 420, -350, 500, -320, 510, -100, 420, 220, 160, 460, -160, 460, -420, 220, -510, -100)
+
+[node name="WallLeft" type="StaticBody2D" parent="."]
+position = Vector2(-600, 20)
+scale = Vector2(0.65, 0.7)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="WallLeft"]
+texture = ExtResource("4_plat10")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="WallLeft"]
+polygon = PackedVector2Array(-270, -320, 270, -320, 290, -100, 70, 120, 0, 360, -270, 180, -280, -100)
+
+[node name="WallRight" type="StaticBody2D" parent="."]
+position = Vector2(600, 20)
+scale = Vector2(0.65, 0.7)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="WallRight"]
+texture = ExtResource("5_plat5")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="WallRight"]
+polygon = PackedVector2Array(-260, -230, 280, -230, 310, -120, 90, 40, -120, 90, -260, 180, -310, 80)
+
+[node name="OneWayPlatforms" type="Node2D" parent="."]
+
+[node name="CenterOneWay" type="StaticBody2D" parent="OneWayPlatforms"]
+position = Vector2(0, -90)
+scale = Vector2(0.75, 0.75)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="OneWayPlatforms/CenterOneWay"]
+texture = ExtResource("6_plat7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="OneWayPlatforms/CenterOneWay"]
+position = Vector2(0, -28)
+shape = SubResource("RectangleShape2D_plat7")
+one_way_collision = true
+
+[node name="LeftHighOneWay" type="StaticBody2D" parent="OneWayPlatforms"]
+position = Vector2(-280, 0)
+scale = Vector2(0.65, 0.65)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="OneWayPlatforms/LeftHighOneWay"]
+texture = ExtResource("7_plat4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="OneWayPlatforms/LeftHighOneWay"]
+position = Vector2(0, -42)
+shape = SubResource("RectangleShape2D_plat4")
+one_way_collision = true
+
+[node name="RightHighOneWay" type="StaticBody2D" parent="OneWayPlatforms"]
+position = Vector2(280, 0)
+scale = Vector2(0.65, 0.65)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="OneWayPlatforms/RightHighOneWay"]
+texture = ExtResource("7_plat4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="OneWayPlatforms/RightHighOneWay"]
+position = Vector2(0, -42)
+shape = SubResource("RectangleShape2D_plat4")
+one_way_collision = true
+
+[node name="Dummy" parent="." instance=ExtResource("8_player")]
+position = Vector2(160, -170)
+player_id = 999
+is_dummy = true
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="SpawnPoint1" type="Marker2D" parent="SpawnPoints" groups=["spawn_points"]]
+position = Vector2(-160, -170)
+
+[node name="SpawnPoint2" type="Marker2D" parent="SpawnPoints" groups=["spawn_points"]]
+position = Vector2(0, -170)
+
+[node name="SpawnPoint3" type="Marker2D" parent="SpawnPoints" groups=["spawn_points"]]
+position = Vector2(-600, -210)
+
+[node name="SpawnPoint4" type="Marker2D" parent="SpawnPoints" groups=["spawn_points"]]
+position = Vector2(600, -150)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+script = ExtResource("9_camera")
+margin = Vector2(200, 150)
+min_zoom = 0.5
+max_zoom = 1.0
+
+[node name="KillZone" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("10_killzone")
+
+[node name="BottomCol" type="CollisionShape2D" parent="KillZone"]
+position = Vector2(0, 900)
+shape = SubResource("RectangleShape2D_killzone_bottom")
+
+[node name="LeftCol" type="CollisionShape2D" parent="KillZone"]
+position = Vector2(-1800, 0)
+shape = SubResource("RectangleShape2D_killzone_side")
+
+[node name="RightCol" type="CollisionShape2D" parent="KillZone"]
+position = Vector2(1800, 0)
+shape = SubResource("RectangleShape2D_killzone_side")
+
+[node name="PauseMenu" parent="." instance=ExtResource("11_pause")]

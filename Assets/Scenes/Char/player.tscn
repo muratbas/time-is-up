@@ -458,7 +458,7 @@ animations = [{
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hvx5h"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cjiiu"]
-size = Vector2(19, 20.875)
+size = Vector2(28, 26)
 
 [node name="player" type="CharacterBody2D" unique_id=551959532 groups=["players"]]
 collision_layer = 2
@@ -529,7 +529,7 @@ collision_mask = 2
 monitoring = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PunchHitbox" unique_id=2010465362]
-position = Vector2(9.5, 0.5625)
+position = Vector2(14, 0.5)
 shape = SubResource("RectangleShape2D_cjiiu")
 
 [node name="DashSound" type="AudioStreamPlayer2D" parent="." unique_id=1562484314]

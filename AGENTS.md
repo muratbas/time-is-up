@@ -31,7 +31,8 @@ Sen uzman bir Godot 4.x ve GDScript geliştiricisisin. "Time is UP!" adında, 2D
 - "Ne" yapıldığını değil, "Neden" yapıldığını yorum satırı olarak yaz (Çünkü Godot kodları zaten ne yapıldığını anlatır).
 - Sadece değişen veya yeni eklenen kod bloklarını ver. Her seferinde 200 satırlık dosyanın tamamını baştan yazdırma, odaklanılacak kısmı göster.
 
-### 6. Temizlik ve Atıl Kod/Dosya Ayıklama (Dead Code & Asset Pruning)
+### 6. Temizlik ve Atıl Kod/Dosya Ayıklama (Dead Code & Asset Pruning) - [ASKIYA ALINDI]
 
-- Yeni bir özellik eklerken veya revize ederken; güncellenen yapıda artık kullanılmayan (obsolete), atıl kalmış kod bloklarını, değişkenleri, fonksiyonları veya geçersizleşen dosyaları projeyi bozmayacağından kesinlikle emin olduğun anda projeyi temiz tutmak adına doğrudan sil. Eski/çöp kod ve dosya birikmesine asla izin verme.
+- NOT: Kullanıcı talimatı gereği asset/dosya silme kuralı askıya alınmıştır. Kullanıcı açıkça onay vermediği sürece hiçbir görsel, ses veya proje dosyası KESİNLİKLE silinmeyecektir. Yalnızca kod düzeyinde lüzumsuz kalmış fonksiyon ve değişkenler temizlenebilir.
+
 

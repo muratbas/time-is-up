@@ -122,6 +122,8 @@ func _sync_spawned_players_visuals() -> void:
 	var keys: Array = connected_players.keys()
 	keys.sort()
 	for p: Node in players:
+		if p.get("is_dummy") == true:
+			continue
 		var p_id: Variant = p.get("player_id")
 		if p_id != null and connected_players.has(p_id):
 			p.set("nickname", connected_players[p_id])

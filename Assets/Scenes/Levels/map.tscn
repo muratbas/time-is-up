@@ -16,7 +16,7 @@
 size = Vector2(380, 16)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_plat4"]
-size = Vector2(280, 16)
+size = Vector2(304.70584, 16)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_killzone_bottom"]
 size = Vector2(4500, 250)
@@ -95,7 +95,7 @@ collision_mask = 0
 texture = ExtResource("5_plat7")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="OneWayPlatforms/TopCenterPlatform" unique_id=533935610]
-position = Vector2(0, -28)
+position = Vector2(-5.555556, -18.05555)
 shape = SubResource("RectangleShape2D_plat7")
 one_way_collision = true
 
@@ -108,7 +108,7 @@ collision_mask = 0
 texture = ExtResource("6_plat4")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="OneWayPlatforms/LeftFloatingPlatform" unique_id=1753944118]
-position = Vector2(0, -42)
+position = Vector2(-5.8823524, -50)
 shape = SubResource("RectangleShape2D_plat4")
 one_way_collision = true
 
@@ -121,7 +121,8 @@ collision_mask = 0
 texture = ExtResource("6_plat4")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="OneWayPlatforms/RightFloatingPlatform" unique_id=77881940]
-position = Vector2(0, -42)
+position = Vector2(-6.7647095, -51.47058)
+scale = Vector2(0.9999999, 0.9999999)
 shape = SubResource("RectangleShape2D_plat4")
 one_way_collision = true
 

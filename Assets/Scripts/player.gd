@@ -101,6 +101,7 @@ var dash_cooldown_timer: float = 0.0
 var dash_ghost_timer: float = 0.0
 var dash_direction: float = 1.0
 var hitpause_timer: float = 0.0
+var is_fast_falling: bool = false
 var original_modulate: Color = Color.WHITE
 
 # ── Debug ────────────────────────────────────────────────────────────────────
@@ -123,17 +124,21 @@ func _ready() -> void:
 	else:
 		$Camera2D.enabled = false
 
-	# Ağdan güncel takma adı çöz
-	var resolved_nick: String = NetworkHandler.connected_players.get(player_id, PlayerData.DEFAULT_NICKNAME)
-	nickname = resolved_nick
+	if is_dummy:
+		nickname = "DUMMY"
+		set_player_color(8) # Nötr beyaz renk
+	else:
+		# Ağdan güncel takma adı çöz
+		var resolved_nick: String = NetworkHandler.connected_players.get(player_id, PlayerData.DEFAULT_NICKNAME)
+		nickname = resolved_nick
 
-	# Oyuncu kimliğine göre renk paletini ata
-	var keys: Array = NetworkHandler.connected_players.keys()
-	keys.sort()
-	var color_index: int = keys.find(player_id)
-	if color_index == -1:
-		color_index = 0
-	set_player_color(color_index)
+		# Oyuncu kimliğine göre renk paletini ata
+		var keys: Array = NetworkHandler.connected_players.keys()
+		keys.sort()
+		var color_index: int = keys.find(player_id)
+		if color_index == -1:
+			color_index = 0
+		set_player_color(color_index)
 
 	double_jump_effect.visible = false
 	punch_hitbox.monitoring = false
@@ -191,6 +196,7 @@ func _physics_process(delta: float) -> void:
 	_post_move(was_on_floor)
 	_update_animation()
 	_update_sprite_direction()
+	_update_bomb_visuals()
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -273,6 +279,7 @@ func _state_falling(_delta: float) -> void:
 		return
 
 	if is_on_floor():
+		is_fast_falling = false
 		jumps_remaining = MAX_JUMPS
 		velocity.x = direction * SPEED if direction != 0.0 else 0.0
 		_transition(State.RUNNING if direction != 0.0 else State.IDLE)
@@ -404,11 +411,27 @@ func _perform_punch() -> void:
 # Fizik ve Duvar Kontrol Yardımcıları
 # ══════════════════════════════════════════════════════════════════════════════
 
+func trigger_fast_fall() -> void:
+	# Yerdeyken veya duvardayken fast fall yapılmaz
+	if is_on_floor() or state == State.WALL_SLIDING or state == State.DASHING or is_eliminated:
+		return
+	is_fast_falling = true
+	# Karakter yukarı çıkıyorsa dikey hızını anında aşağı çevir, düşüyorsa ekstra ivme ver
+	if velocity.y < 350.0:
+		velocity.y = 450.0
+	else:
+		velocity.y += 250.0
+
+
 func _apply_gravity(delta: float) -> void:
 	# Zemin haricinde asimetrik yerçekimi (Floaty yukarı, Fast-Fall aşağı)
 	if not is_on_floor() and coyote_timer.is_stopped():
 		var grav_y: float = get_gravity().y
-		if velocity.y < 0.0:
+		if is_fast_falling:
+			# Fast-fall: Hızlı çakılma esnasında çok daha yüksek yerçekimi ve hız limiti
+			velocity.y += grav_y * FALL_GRAVITY_MULT * 1.6 * delta
+			velocity.y = minf(velocity.y, MAX_FALL_SPEED * 1.35)
+		elif velocity.y < 0.0:
 			velocity.y += grav_y * JUMP_GRAVITY_MULT * delta
 		else:
 			velocity.y += grav_y * FALL_GRAVITY_MULT * delta
@@ -418,6 +441,7 @@ func _apply_gravity(delta: float) -> void:
 func _check_wall_slide() -> bool:
 	# Havada duvara yaslanıldığında Wall Slide'a geçişi doğrular
 	if is_on_wall_only() and not is_on_floor() and velocity.y > 0.0:
+		is_fast_falling = false
 		_transition(State.WALL_SLIDING)
 		return true
 	return false
@@ -564,6 +588,29 @@ func lose_tag() -> void:
 	is_tag = false
 	tnt_marker.visible = false
 	tnt_sprite.stop()
+	tnt_sprite.speed_scale = 1.0
+	tnt_sprite.modulate = Color.WHITE
+	tnt_sprite.scale = Vector2(0.83, 0.87)
+
+
+func _update_bomb_visuals() -> void:
+	if not is_tag or is_eliminated:
+		return
+	var gm: Node = get_tree().get_first_node_in_group("game_manager")
+	if gm and gm.get("game_state") == 1: # GameState.PLAYING
+		var timer_val: float = float(gm.get("bomb_timer"))
+		if timer_val <= 6.0 and timer_val > 0.0:
+			var urgency: float = 1.0 - (timer_val / 6.0)
+			# Animasyon oynatma hızı 1.0'dan 3.0'a kadar hızlanır
+			tnt_sprite.speed_scale = 1.0 + (urgency * 2.0)
+			# Nabız gibi büyüme ve kırmızı-beyaz parıltı efekti
+			var pulse: float = (sin(float(Time.get_ticks_msec()) * (0.016 + urgency * 0.024)) + 1.0) * 0.5
+			tnt_sprite.scale = Vector2.ONE * (0.83 + pulse * 0.35)
+			tnt_sprite.modulate = Color(1.0, 1.0 - (pulse * 0.8), 1.0 - (pulse * 0.8), 1.0)
+		else:
+			tnt_sprite.speed_scale = 1.0
+			tnt_sprite.scale = Vector2(0.83, 0.87)
+			tnt_sprite.modulate = Color.WHITE
 
 
 func eliminate() -> void:

@@ -46,6 +46,8 @@ func _process(_delta: float) -> void:
 		_send_punch.rpc()
 	if Input.is_action_just_pressed("Special"):
 		_send_dash.rpc()
+	if Input.is_action_just_pressed("Down"):
+		_send_fast_fall.rpc()
 
 
 
@@ -87,4 +89,11 @@ func _send_punch() -> void:
 func _send_dash() -> void:
 	if player.dash_cooldown_timer <= 0.0 and player.state != player.State.DASHING and player.state != player.State.STUNNED:
 		player._perform_dash()
+
+
+@rpc("authority", "call_local", "reliable")
+func _send_fast_fall() -> void:
+	if not player.is_on_floor() and player.state != player.State.WALL_SLIDING and player.state != player.State.DASHING and player.state != player.State.STUNNED:
+		player.trigger_fast_fall()
+
 

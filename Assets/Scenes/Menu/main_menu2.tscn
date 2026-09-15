@@ -142,6 +142,36 @@ corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Map"]
+bg_color = Color(0.35, 0.15, 0.65, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.02, 0.25, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 2
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Map_Hover"]
+bg_color = Color(0.48, 0.25, 0.85, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
 [node name="Main Menu" type="Node2D" unique_id=1118124919]
 script = ExtResource("1_eaxjr")
 
@@ -192,53 +222,77 @@ layout_mode = 0
 offset_left = 40.0
 offset_top = 100.0
 offset_right = 230.0
-offset_bottom = 320.0
-theme_override_constants/separation = 10
+offset_bottom = 330.0
+theme_override_constants/separation = 8
 
 [node name="Host" type="Button" parent="button_manager/VBoxContainer" unique_id=1456897785]
-custom_minimum_size = Vector2(0, 36)
+custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 17
 theme_override_styles/normal = SubResource("StyleBoxFlat_Host")
 theme_override_styles/hover = SubResource("StyleBoxFlat_Host_Hover")
 text = "OYUN KUR"
 
 [node name="Join" type="Button" parent="button_manager/VBoxContainer" unique_id=82405761]
-custom_minimum_size = Vector2(0, 36)
+custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 17
 theme_override_styles/normal = SubResource("StyleBoxFlat_Join")
 theme_override_styles/hover = SubResource("StyleBoxFlat_Join_Hover")
 text = "HIZLI BAGLAN"
 
+[node name="MapSelect" type="Button" parent="button_manager/VBoxContainer" unique_id=778899001]
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.95, 0.6, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_Map")
+theme_override_styles/hover = SubResource("StyleBoxFlat_Map_Hover")
+text = "HARITA: ARENA 1"
+
+[node name="Practice" type="Button" parent="button_manager/VBoxContainer" unique_id=778899002]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.95, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_Map")
+theme_override_styles/hover = SubResource("StyleBoxFlat_Map_Hover")
+text = "ANTRENMAN (TEST)"
+
 [node name="LobbyButton" type="Button" parent="button_manager/VBoxContainer" unique_id=631599400]
-custom_minimum_size = Vector2(0, 36)
+custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.15, 0.1, 0, 1)
 theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
 theme_override_constants/outline_size = 2
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 17
 theme_override_styles/normal = SubResource("StyleBoxFlat_Lobby")
 theme_override_styles/hover = SubResource("StyleBoxFlat_Lobby_Hover")
 text = "LOBIYE GEC"
 
 [node name="Quit" type="Button" parent="button_manager/VBoxContainer" unique_id=1081114852]
-custom_minimum_size = Vector2(0, 32)
+custom_minimum_size = Vector2(0, 28)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 15
 theme_override_styles/normal = SubResource("StyleBoxFlat_Quit")
 theme_override_styles/hover = SubResource("StyleBoxFlat_Quit_Hover")
 text = "CIKIS"
